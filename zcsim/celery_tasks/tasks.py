@@ -92,7 +92,8 @@ def get_device_info(device_id):
 
 def set_device_info(device_id, state, variables):
     set_device_state(device_id, state)
-    set_device_variables(device_id, variables)
+    # Variables should only be set by the user
+    #set_device_variables(device_id, variables)
 
 def eval_device_time_step(device_id, up_to_time):
     """Checks a devices timestep and evaluates it needs running"""

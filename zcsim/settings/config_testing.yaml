@@ -18,7 +18,7 @@ logging:
         novogateway: &handle
             handlers:
               - stderr
-            level: DEBUG
+            level: TRACE
             propagate: True
         ibmiotf:
             <<: *handle
