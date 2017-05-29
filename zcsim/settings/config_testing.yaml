@@ -1,0 +1,40 @@
+logging:
+    # 'version' is required by logging library
+    version: 1
+    # can have multiple formatters and handlers
+    formatters:
+        default:
+            #format: "{asctime:s} {program:s} [{levelname:8s}]: ({name:s}:{lineno}) {message:s}"
+            #datefmt: "%b %d %H:%M:%S"
+            format: "[{levelname:8s}]: ({name:s}:{lineno}:{funcName:s}) {message:s}"
+            style: "{"
+    handlers:
+        stderr:
+            class: logging.StreamHandler
+            formatter: default
+    # Can specify a different logger for each file - this acts as the one for
+    # the whole module by specifying the 'propagate' keyword
+    loggers:
+        novogateway: &handle
+            handlers:
+              - stderr
+            level: DEBUG
+            propagate: True
+        ibmiotf:
+            <<: *handle
+        __main__:
+            <<: *handle
+        coap:
+            <<: *handle
+
+redis:
+    host: "localhost"
+    port: 6379
+
+celery:
+    broker: "redis://redis:6379"
+    backend: "redis"
+
+auth:
+    jwt_secret_key: "JGkxhnGMU3kC7nA8jHVnQETrY6tYFCVdhrQt6NhXETUUf3JSGNnqb6egUWDGscQX"
+
