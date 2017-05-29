@@ -15,10 +15,15 @@ else:
 CELERY_TIMEZONE = 'Europe/London'
 CELERY_ENABLE_UTC = True
 
+CELERY_TASK_SERIALIZER = "pickle"
+CELERY_RESULT_SERIALIZER='pickle'
+CELERY_ACCEPT_CONTENT = ['pickle']
+
+
 CELERYBEAT_SCHEDULE = {
     "device_simulate_time": {
-        "task": "zcsim.celery_tasks.tasks.test",
-        "schedule": crontab(second="*/5"),
+        "task": "zcsim.celery_tasks.tasks.time_step",
+        "schedule": settings["timestep_size"],
     }
 }
 

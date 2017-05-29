@@ -66,6 +66,7 @@ class SettingsCache:
 
         if loaded:
             self.cached_settings.update(**loaded)
+            self.cached_settings.update(env=os.getenv("ZCSIM_ENV", "testing"))
         else:
             logger.warning("Nothing in settings file")
 
