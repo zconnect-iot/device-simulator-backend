@@ -1,0 +1,33 @@
+version: '2.0'
+services:
+
+    apiserver:
+        build:
+            context: .
+            dockerfile: Dockerfile.zcsimserver
+        environment: &env
+            - ZCSIM_ENV=testing
+        ports:
+            - "5000:5000"
+        depends_on:
+            - celeryworker
+            - redis
+
+    celeryworker:
+        environment: *env
+        build:
+            context: .
+            dockerfile: Dockerfile.zcsimworker
+        depends_on:
+            - redis
+
+    celerybeat:
+        environment: *env
+        build:
+            context: .
+            dockerfile: Dockerfile.zcsimbeat
+        depends_on:
+            - redis
+
+    redis:
+        image: "redis:alpine"

@@ -20,3 +20,31 @@ def get_redis():
     return StrictRedis(connection_pool=RedisConnectionPoolSingleton(decode_responses=True),
                        charset="utf-8",
                        decode_responses=True)
+
+# Device state
+def get_device_state_key(device_id):
+    return "{device_id}_state".format(device_id)
+
+def set_device_state(device_id, state):
+    redis = get_redis()
+    device_key = get_device_state_key(device_id)
+    redis.hmset(device_key, state)
+
+def get_device_state(device_id):
+    redis = get_redis()
+    device_key = get_device_state_key(device_id)
+    return redis.hgetall(device_key)
+
+# device variables
+def get_device_variables_key(device_id):
+    return "{device_id}_variables".format(device_id)
+
+def set_device_variables(device_id, variables):
+    redis = get_redis()
+    device_key = get_device_variables_key(device_id)
+    redis.hmset(device_key, variables)
+
+def get_device_variables(device_id):
+    redis = get_redis()
+    device_key = get_device_variables_key(device_id)
+    return redis.hgetall(device_key)

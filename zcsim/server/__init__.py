@@ -30,12 +30,14 @@ app = create_app()
 
 # pylint: disable=wrong-import-position
 from .user import authentication
+from .devices import devices
 
 jwt = JWTManager(app)
 CORS(app)
 
-app.register_blueprint(provisioning_root, url_prefix='/api/v1')
-app.register_blueprint(authentication, url_prefix='/api/v1')
+prefix = "/api/v1"
+app.register_blueprint(devices, url_prefix=prefix)
+app.register_blueprint(authentication, url_prefix=prefix)
 
 app.json_encoder = CustomJSONEncoder
 

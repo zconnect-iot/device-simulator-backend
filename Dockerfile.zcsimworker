@@ -1,0 +1,2 @@
+FROM zcsimbase:latest
+CMD ["./celery_worker.sh"]

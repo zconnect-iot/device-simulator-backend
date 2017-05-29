@@ -1,5 +1,5 @@
 from celery import Celery
-from ambieprovision.settings import get_settings
+from ..settings import get_settings
 
 settings = get_settings()
 
@@ -7,7 +7,7 @@ celery_settings = {
     'task_serializer': 'pickle',
     'result_serializer': 'pickle',
     'accept_content': ['pickle'],
-    'imports': ['ambieprovision.celery_tasks.tasks'],
+    'imports': ['zcsim.celery_tasks.tasks'],
     'broker_url': settings['celery']['broker']
 }
 
