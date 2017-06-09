@@ -33,6 +33,22 @@ def set_device_state(device_id, state):
     device_key = get_device_state_key(device_id)
     redis.hmset(device_key, state)
 
+def get_device_state_min_max(device_id):
+    min_max_thresholds = settings['min_max_thresholds']['state']
+    state = get_device_state(device_id)
+
+    for k,v in state.items():
+        # Add the min / max values.
+        try:
+            state[k] = {
+                "min": min_max_thresholds[k]["min"],
+                "max": min_max_thresholds[k]["max"],
+                "value": v,
+            }
+        except KeyError:
+            state[k] = v
+    return state
+
 def get_device_state(device_id):
     redis = get_redis()
     device_key = get_device_state_key(device_id)
@@ -44,6 +60,11 @@ def get_device_state(device_id):
             pass
     return data
 
+def delete_device_state(device_id):
+    redis = get_redis()
+    device_key = get_device_state_key(device_id)
+    redis.delete(device_key)
+
 # device variables
 def get_device_variables_key(device_id):
     return "{}_variables".format(device_id)
@@ -52,7 +73,21 @@ def set_device_variables(device_id, variables):
     redis = get_redis()
     device_key = get_device_variables_key(device_id)
     redis.hmset(device_key, variables)
-    redis.expire(device_key, settings["reset_timeout"])
+    if settings["reset_timeout"]:
+        redis.expire(device_key, settings["reset_timeout"])
+
+def get_device_variables_min_max(device_id):
+    min_max_thresholds = settings['min_max_thresholds']['variables']
+    variables = get_device_variables(device_id)
+
+    for k,v in variables.items():
+        # Add the min / max values.
+        variables[k] = {
+            "min": min_max_thresholds[k]["min"],
+            "max": min_max_thresholds[k]["max"],
+            "value": v,
+        }
+    return variables
 
 def get_device_variables(device_id):
     redis = get_redis()
@@ -63,7 +98,17 @@ def get_device_variables(device_id):
             data[k] = float(v)
         except ValueError:
             pass
+
     return data
+
+def delete_device_variables(device_id):
+    redis = get_redis()
+    device_key = get_device_variables_key(device_id)
+    redis.delete(device_key)
+
+def reset_state_and_variables(device_id):
+    delete_device_state(device_id)
+    delete_device_variables(device_id)
 
 # Timestep helpers
 def get_last_time_step(device_id, now):

@@ -35,10 +35,10 @@ auth:
     jwt_secret_key: "JGkxhnGMU3kC7nA8jHVnQETrY6tYFCVdhrQt6NhXETUUf3JSGNnqb6egUWDGscQX"
 
 # The timestamp size in secconds
-timestep_size: 5
+timestep_size: 1
 
 # Reset simulation variables every X seconds
-reset_timeout: 60
+reset_timeout: 0
 
 # settings for connecting to watson iot as a gateway
 watson_iot_gateway:
@@ -46,3 +46,35 @@ watson_iot_gateway:
 
 devices:
     - "device123"
+
+min_max_thresholds:
+    variables:
+        temp_out:
+            min: 0.1
+            max: 50.0
+        insulation:
+            min: 0.1
+            max: 20.0
+        thermal_mass:
+            min: 0.1
+            max: 50.0
+        efficiency:
+            min: 0.1
+            max: 5.0
+    state:
+        temp_in:
+            min: -5.0
+            max: 30.0
+        current_draw:
+            min: 50.0
+            max: 100.0
+        temp_in_min:
+            min: 1.0
+            max: 10.0
+        temp_in_max:
+            min: 1.0
+            max: 10.0
+        present_current_draw:
+            min: 0.0
+            max: 100.0
+
