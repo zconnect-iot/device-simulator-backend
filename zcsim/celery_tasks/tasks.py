@@ -34,7 +34,7 @@ def fridge_step(device_id, state, variables):
     s = dict(state)
     v = dict(variables)
 
-    tau = settings['timestep_size'] / (60 * 60) # in hours
+    tau = settings['timestep_size'] / 60#(60 * 60) # in hours
 
     #physics time
     epsilon = exp(-(tau * v["insulation"]) / v["thermal_mass"])
