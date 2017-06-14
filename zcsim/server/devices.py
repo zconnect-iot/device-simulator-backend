@@ -44,8 +44,8 @@ def update_variables(device_id):
 def reset(device_id):
     """ Reset State and Variables to default"""
 
-    variables = get_device_variables(device_id)
+    #variables = get_device_variables(device_id)
     # update from posted vars
-    reset_state_and_variables(variables)
+    reset_state_and_variables(device_id)
 
     return jsonify(None), 201

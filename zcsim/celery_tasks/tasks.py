@@ -78,6 +78,7 @@ def get_device_info(device_id):
             "temp_in_max": 8.0,
             "present_current_draw": 0.0,
         })
+        set_device_state(device_id, state)
 
     if not variables:
         logger.info("setting default device variables")
@@ -87,6 +88,7 @@ def get_device_info(device_id):
             "thermal_mass": 15.97,
             "efficiency": 3.0,
         }
+        set_device_variables(device_id, variables)
 
     return (state, variables)
 
