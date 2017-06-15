@@ -15,7 +15,10 @@ RUN apk add --no-cache --virtual .fetch-deps \
 
 RUN adduser -D -g '' celery_worker_user
 
+
 WORKDIR /app/zcsim
+RUN chown celery_worker_user /app/zcsim
+
 
 # install requirements early for faster rebuilds
 COPY zcsim/requirements.txt .

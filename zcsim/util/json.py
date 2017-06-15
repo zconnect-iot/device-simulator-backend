@@ -23,3 +23,8 @@ class CustomJSONEncoder(JSONEncoder):
             return o.serialize_to_json()
 
         return JSONEncoder.default(self, o)
+
+
+def dump_plain_json(obj):
+    """ Used to dump a plain JSON object from mongoengine - for MQTT messages"""
+    return JSONEncoder().encode(obj)

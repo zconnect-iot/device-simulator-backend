@@ -2,7 +2,7 @@ import time
 from .celery_app import app
 from celery import current_task
 from celery.utils.log import get_task_logger
-from datetime import datetime
+from datetime import datetime, timedelta
 from math import exp
 
 from dateutil import parser
@@ -16,11 +16,18 @@ from ..util.redis import (
     get_device_variables,
     set_last_time_step,
     get_last_time_step,
+    set_last_send_time,
+    get_last_send_time
 )
+
+from ..util.ibm import get_device_conn
 
 from ..settings import get_settings
 
+from zcsim.util.task_base import WatsonIoTTaskBase
+
 logger = get_task_logger(__name__)
+
 
 def fridge_step(device_id, state, variables):
     """Performs the timesteps
@@ -69,6 +76,8 @@ def get_device_info(device_id):
     state = get_device_state(device_id)
     variables = get_device_variables(device_id)
 
+    print("Variables were: {}".format(variables))
+
     if not state.get("temp_in"):
         logger.info("setting default device state")
         state.update({
@@ -100,8 +109,10 @@ def set_device_info(device_id, state, variables):
 def eval_device_time_step(device_id, up_to_time):
     """Checks a devices timestep and evaluates it needs running"""
     settings = get_settings()
-    time_step = relativedelta(seconds = settings['timestep_size'])
+    time_step = relativedelta(seconds=settings['timestep_size'])
     now = get_last_time_step(device_id, up_to_time)
+
+    send_interval = timedelta(seconds=settings['send_interval'])
 
     while (now + time_step) < up_to_time:
         logger.info("doing TS step for {}".format(device_id))
@@ -111,12 +122,39 @@ def eval_device_time_step(device_id, up_to_time):
         set_device_info(device_id, state, variables)
         # Evaluate if we should send a TS data point to ZConnect platform
         # TODO
+        last_send_time = get_last_send_time(device_id)
+        real_now = datetime.utcnow()
+        if not last_send_time or real_now - last_send_time > send_interval:
+            logger.info("Sending to IBM")
+            upload_device_state(device_id)
+            set_last_send_time(device_id, real_now)
+        else:
+            logger.info("Not sending to IBM, %s, %s, %s", last_send_time, now, send_interval)
 
         now = set_last_time_step(device_id, now + time_step)
 
     logger.info("finished device {}".format(device_id))
 
-@app.task()
+def upload_device_state(device_id):
+    """ Upload the device state and variables to Watson IoT"""
+    device_conn = time_step.watson
+    # Get the state and variables so we can build our payload.
+    state = get_device_state(device_id)
+    variables = get_device_variables(device_id)
+
+    payload = {
+        "inside_temp": state['temp_in'],
+        "external_temp": variables['temp_out'],
+        "power_use": state['present_current_draw'],
+    }
+    device_conn.publishEvent("periodic",
+                             "json-iotf",
+                             payload)
+
+    logger.info("Sent event to IBM with payload: %s", payload)
+
+
+@app.task(base=WatsonIoTTaskBase, ignore_result=True)
 def time_step():
     """ For each device id which we support, run the simulation for timesteps
         up to the current time.

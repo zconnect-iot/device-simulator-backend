@@ -123,8 +123,26 @@ def get_last_time_step(device_id, now):
         ts = parser.parse(ts_string)
     return ts
 
+
 def set_last_time_step(device_id, ts):
     redis = get_redis()
     device_key = get_device_state_key(device_id)
     redis.hset(device_key, "ts", str(ts))
     return ts
+
+def get_last_send_time(device_id):
+    redis = get_redis()
+    device_key = get_device_state_key(device_id)
+    ts_string = redis.hget(device_key, 'send_ts')
+    if ts_string:
+        return parser.parse(ts_string)
+    else:
+        return None
+
+def set_last_send_time(device_id, ts):
+    """
+    Sets the last send time to the ts
+    """
+    redis = get_redis()
+    device_key = get_device_state_key(device_id)
+    redis.hset(device_key, 'send_ts', str(ts))

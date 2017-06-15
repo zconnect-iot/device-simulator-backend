@@ -37,6 +37,9 @@ auth:
 # The timestamp size in secconds
 timestep_size: 1
 
+# How often to send data to IBM:
+send_interval: 10
+
 # Reset simulation variables every X seconds
 reset_timeout: 0
 
