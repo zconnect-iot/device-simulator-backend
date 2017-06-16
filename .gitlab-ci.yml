@@ -15,6 +15,9 @@ release-image:
     script:
         - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN code.zoetrope.io:4678
 
+        - docker build -f Dockerfile.zcsimbase -t code.zoetrope.io:4678/zconnect/device-simulator-backend/zcsimbase:latest .
+        - docker push code.zoetrope.io:4678/zconnect/device-simulator-backend/zcsimbase:latest
+
         - docker build -f Dockerfile.zcsimserver -t code.zoetrope.io:4678/zconnect/device-simulator-backend/apiserver:latest .
         - docker push code.zoetrope.io:4678/zconnect/device-simulator-backend/apiserver:latest
 
