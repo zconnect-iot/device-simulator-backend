@@ -1,2 +1,2 @@
-FROM zcsimbase:latest
+FROM code.zoetrope.io:4678/zconnect/device-simulator-backend/zcsimbase:latest
 CMD ["./celery_beat.sh"]
