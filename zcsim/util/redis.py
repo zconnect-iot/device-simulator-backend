@@ -45,6 +45,8 @@ def get_device_state_min_max(device_id):
                 "max": min_max_thresholds[k]["max"],
                 "value": v,
             }
+            if "name" in min_max_thresholds[k]:
+                state[k].update({"human_name": min_max_thresholds[k]["name"]})
         except KeyError:
             state[k] = v
     return state
@@ -87,6 +89,8 @@ def get_device_variables_min_max(device_id):
             "max": min_max_thresholds[k]["max"],
             "value": v,
         }
+        if "name" in min_max_thresholds[k]:
+            variables[k].update({"human_name": min_max_thresholds[k]["name"]})
     return variables
 
 def get_device_variables(device_id):

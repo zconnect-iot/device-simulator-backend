@@ -83,8 +83,8 @@ def get_device_info(device_id):
         state.update({
             "temp_in": 5.0,
             "current_draw": 70.0,
-            "temp_in_min": 5.0,
-            "temp_in_max": 8.0,
+            "temp_in_min": 3.0,
+            "temp_in_max": 5.0,
             "present_current_draw": 0.0,
         })
         set_device_state(device_id, state)

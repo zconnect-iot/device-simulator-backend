@@ -1,0 +1,28 @@
+image: python:3.6.1
+
+variables:
+
+stages:
+    - release
+
+release-image:
+    stage: release
+    image: benhowes/bluemix-deploy:latest
+    tags:
+        - dind
+    services:
+        - docker:dind
+    script:
+        - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN code.zoetrope.io:4678
+
+        - docker build -f Dockerfile.zcsimserver code.zoetrope.io:4678/zconnect/device-simulator-backend/apiserver:latest .
+        - docker push code.zoetrope.io:4678/zconnect/device-simulator-backend/apiserver:latest
+
+        - docker build -f Dockerfile.zcsimworker code.zoetrope.io:4678/zconnect/device-simulator-backend/celeryworker:latest .
+        - docker push code.zoetrope.io:4678/zconnect/device-simulator-backend/celeryworker:latest
+
+        - docker build -f Dockerfile.zcsimbeat code.zoetrope.io:4678/zconnect/device-simulator-backend/celerybeat:latest .
+        - docker push code.zoetrope.io:4678/zconnect/device-simulator-backend/celerybeat:latest
+    
+    only:
+        - tags

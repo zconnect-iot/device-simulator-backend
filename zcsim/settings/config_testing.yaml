@@ -55,19 +55,24 @@ min_max_thresholds:
         temp_out:
             min: 0.1
             max: 50.0
+            name: 'External Temperature'
         insulation:
             min: 0.1
             max: 20.0
+            name: 'Insulation Value'
         thermal_mass:
             min: 0.1
             max: 50.0
+            name: 'Thermal Mass'
         efficiency:
             min: 0.1
             max: 5.0
+            name: 'Efficiency'
     state:
         temp_in:
             min: -5.0
             max: 30.0
+            name: 'Internal Temperature'
         current_draw:
             min: 50.0
             max: 100.0
@@ -80,4 +85,5 @@ min_max_thresholds:
         present_current_draw:
             min: 0.0
             max: 100.0
+            name: 'Power Use'
 
