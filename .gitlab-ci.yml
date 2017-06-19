@@ -15,18 +15,18 @@ release-image:
     script:
         - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN code.zoetrope.io:4678
 
-        - docker build -f Dockerfile.zcsimbase -t code.zoetrope.io:4678/zconnect/device-simulator-backend/zcsimbase:latest .
+        - docker build -f Dockerfile.zcsimbase -t code.zoetrope.io:4678/zconnect/device-simulator-backend/zcsimbase:$CI_COMMIT_TAG .
 
-        - docker build -f Dockerfile.zcsimserver -t code.zoetrope.io:4678/zconnect/device-simulator-backend/apiserver:latest .
+        - docker build -f Dockerfile.zcsimserver -t code.zoetrope.io:4678/zconnect/device-simulator-backend/apiserver:$CI_COMMIT_TAG .
 
-        - docker build -f Dockerfile.zcsimworker -t code.zoetrope.io:4678/zconnect/device-simulator-backend/celeryworker:latest .
+        - docker build -f Dockerfile.zcsimworker -t code.zoetrope.io:4678/zconnect/device-simulator-backend/celeryworker:$CI_COMMIT_TAG .
 
-        - docker build -f Dockerfile.zcsimbeat -t code.zoetrope.io:4678/zconnect/device-simulator-backend/celerybeat:latest .
+        - docker build -f Dockerfile.zcsimbeat -t code.zoetrope.io:4678/zconnect/device-simulator-backend/celerybeat:$CI_COMMIT_TAG .
 
-        - docker push code.zoetrope.io:4678/zconnect/device-simulator-backend/zcsimbase:latest
-        - docker push code.zoetrope.io:4678/zconnect/device-simulator-backend/apiserver:latest
-        - docker push code.zoetrope.io:4678/zconnect/device-simulator-backend/celeryworker:latest
-        - docker push code.zoetrope.io:4678/zconnect/device-simulator-backend/celerybeat:latest
+        - docker push code.zoetrope.io:4678/zconnect/device-simulator-backend/zcsimbase:$CI_COMMIT_TAG
+        - docker push code.zoetrope.io:4678/zconnect/device-simulator-backend/apiserver:$CI_COMMIT_TAG
+        - docker push code.zoetrope.io:4678/zconnect/device-simulator-backend/celeryworker:$CI_COMMIT_TAG
+        - docker push code.zoetrope.io:4678/zconnect/device-simulator-backend/celerybeat:$CI_COMMIT_TAG
     
     only:
         - tags
