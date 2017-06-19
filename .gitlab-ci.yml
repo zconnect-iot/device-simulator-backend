@@ -23,7 +23,7 @@ release-image:
 
         - docker build -f Dockerfile.zcsimbeat -t code.zoetrope.io:4678/zconnect/device-simulator-backend/celerybeat:$CI_COMMIT_TAG .
 
-        - docker push code.zoetrope.io:4678/zconnect/device-simulator-backend/zcsimbase:$CI_COMMIT_TAG
+        - docker push code.zoetrope.io:4678/zconnect/device-simulator-backend/zcsimbase:latest
         - docker push code.zoetrope.io:4678/zconnect/device-simulator-backend/apiserver:$CI_COMMIT_TAG
         - docker push code.zoetrope.io:4678/zconnect/device-simulator-backend/celeryworker:$CI_COMMIT_TAG
         - docker push code.zoetrope.io:4678/zconnect/device-simulator-backend/celerybeat:$CI_COMMIT_TAG
