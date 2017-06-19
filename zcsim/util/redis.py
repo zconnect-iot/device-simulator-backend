@@ -12,7 +12,7 @@ class RedisConnectionPoolSingleton:
 
     def __new__(cls, *args, **kwargs):
         if not cls.instance:
-            redis_settings = settings['redis']
+            redis_settings = settings['redis']['connection']
             if 'username' in redis_settings:
                 redis_settings.pop('username')
             cls.instance = ConnectionPool(*args, **kwargs, **redis_settings)
