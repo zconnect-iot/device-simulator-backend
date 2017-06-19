@@ -32,9 +32,9 @@ logging:
 redis:
     connection:
         username: admin
-        password: AIMPYRYMPWCVBYLV
-        host: sl-eu-fra-2-portal.1.dblayer.com
-        port: 15415
+        password: MBVCMMNSXPWOXQQP
+        host: sl-eu-lon-2-portal.4.dblayer.com
+        port: 18133
 
 auth:
     jwt_secret_key: "JGkxhnGMU3kC7nA8jHVnQETrY6tYFCVdhrQt6NhXETUUf3JSGNnqb6egUWDGscQX"
