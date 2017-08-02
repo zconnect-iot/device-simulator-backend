@@ -8,11 +8,13 @@ Flask-JWT-Extended==2.1.0
 itsdangerous==0.24
 Jinja2==2.9.6
 kombu==4.0.2
+numpy==1.13.1
 MarkupSafe==1.0
 PyJWT==1.5.0
 pytz==2017.2
 PyYAML==3.12
 redis==2.10.5
+scipy==0.19.1
 simplekv==0.10.0
 simpy==3.0.10
 six==1.10.0
