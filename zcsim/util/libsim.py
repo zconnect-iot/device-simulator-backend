@@ -27,7 +27,7 @@ class FirstOrderVar(T('FirstOrderVar', 'name fuse_inputs gain time_constant')):
         # TODO: divide the timestamps in a smarter way
         ts = numpy.linspace(0, sim_step.duration, 100)
         xs = odeint(model, sim_step.x0, ts)
-        return xs[-1]
+        return (ts, xs)
 
 
 def angular_velocity(name):
