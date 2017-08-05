@@ -1,15 +1,11 @@
-import time
 from .celery_app import app
-from celery import current_task
 from celery.utils.log import get_task_logger
 from datetime import datetime, timedelta
 from math import exp
 
-from dateutil import parser
 from dateutil.relativedelta import relativedelta
 
 from ..util.redis import (
-    get_redis,
     set_device_state,
     get_device_state,
     set_device_variables,
@@ -19,8 +15,6 @@ from ..util.redis import (
     set_last_send_time,
     get_last_send_time
 )
-
-from ..util.ibm import get_device_conn
 
 from ..settings import get_settings
 
@@ -37,7 +31,6 @@ def fridge_step(device_id, state, variables):
     types can be added easily.
     """
     settings = get_settings()
-    time_step = relativedelta(seconds = settings['timestep_size'])
     s = dict(state)
     v = dict(variables)
 
