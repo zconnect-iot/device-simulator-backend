@@ -6,7 +6,7 @@ Run this from toplevel project directory like so:
 
     $ PYTHONPATH="$PYTHONPATH:." python -i tests/interactive_libsim.py
 """
-from zcsim.util.libsim import *
+from zcsim.libsim.model import *
 import matplotlib.pyplot as plt
 
 def id(_):
