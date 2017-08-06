@@ -6,11 +6,11 @@ Run this from toplevel project directory like so:
 
     $ PYTHONPATH="$PYTHONPATH:." python -i tests/interactive_libsim.py
 """
-from zcsim.libsim.model import *
+from zcsim.libsim.models import *
 import matplotlib.pyplot as plt
 
 def id(_):
     return _
 
-var = FirstOrderVar('angular-velocity', id, 0.1, 20)
+var = FirstOrderVar('angular-velocity', id, 0.1, 20, start=0)
 step = SimulationStep(20, 100, 25)
