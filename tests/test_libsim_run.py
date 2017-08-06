@@ -6,7 +6,7 @@ from tests.system import (
     deps,
 )
 
-from zcsim.libsim.deps import (
+from zcsim.libsim.run import (
     one_step,
 )
 
