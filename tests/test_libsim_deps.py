@@ -1,32 +1,52 @@
-from zcsim.libsim.models import (
-    SimulationStep,
-    latest_sample,
-)
-
 from tests.system import (
-    bounded_angular_velocity,
+    angular_velocity,
+    input_current,
+    engine_efficiency,
+    load,
+    deps,
 )
 
-def test_upper_bounds_ensured():
-    """
-    Long enough simulation duration should saturate a bounded variable
-    """
-    example_step = SimulationStep(
-        x0=0,
-        u=15000,
-        duration=100
-    )
-    sim_res = bounded_angular_velocity(example_step)
-    assert latest_sample(sim_res)  == bounded_angular_velocity.max
+from zcsim.libsim.deps import (
+    one_step,
+)
 
-def test_lower_bounds_ensured():
+import numbers
+
+def test_all_keys_present():
     """
-    Long enough simulation should saturate a bounded variable (lower bound)
+    New value table should only have state variable keys
     """
-    example_step = SimulationStep(
-        x0=0,
-        u=-1,
-        duration=100
+    process_table = {
+        angular_velocity: 300,
+        input_current: 3
+    }
+    user_table = {
+        load: 2,
+        engine_efficiency: 70
+    }
+    new_process_table = one_step(
+        process_table, user_table, deps, 5*angular_velocity.time_constant
     )
-    _, samples = bounded_angular_velocity(example_step)
-    assert not any(s < bounded_angular_velocity.min for s in samples)
+
+    assert set(new_process_table.keys()) == set(process_table.keys())
+    print(new_process_table)
+
+def test_new_process_table_each_key_stores_one_float():
+    """
+    Every key in the process table should have just one numeric value
+    """
+    process_table = {
+        angular_velocity: 300,
+        input_current: 3
+    }
+    user_table = {
+        load: 2,
+        engine_efficiency: 70
+    }
+    new_process_table = one_step(
+        process_table, user_table, deps, 5*angular_velocity.time_constant
+    )
+    print(new_process_table)
+
+    assert all(isinstance(v, numbers.Number)
+               for _,v in new_process_table.items())

@@ -2,10 +2,9 @@ import numpy
 from scipy.integrate import odeint
 from collections import namedtuple as T
 
-
-SimulationStep = T('SimulationStep', 'x0 u duration')
 ExternalVar = T('ExternalVar', 'unit name start')
 
+SimulationStep = T('SimulationStep', 'x0 u duration')
 
 class Bounded(T('Bounded', 'var min max')):
     def _ensure_in_range(self, v):
@@ -51,6 +50,9 @@ class FirstOrderVar(T(
         return (ts, tuple(el for el in xs[:, 0]))
 
 def latest_sample(sim_result):
+    """
+    Returns the variable value at the end of simulation step
+    """
     ts, xs = sim_result
     # TODO: Change this when adding higher order variables
     return xs[-1]
