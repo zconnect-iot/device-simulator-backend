@@ -37,3 +37,15 @@ deps = {
     bounded_angular_velocity: (input_current, load),
     input_current: (engine_efficiency, load)
 }
+
+system = {
+    'processes': (angular_velocity, bounded_angular_velocity, input_current),
+    'properties': (load, engine_efficiency),
+    'dependencies': deps,
+}
+
+incomplete_system = {
+    'processes': system['processes'],
+    'properties': system['properties'],
+    'dependencies': dict()
+}
