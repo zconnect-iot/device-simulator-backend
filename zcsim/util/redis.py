@@ -34,21 +34,8 @@ def set_device_state(device_id, state):
     redis.hmset(device_key, state)
 
 def get_device_state_min_max(device_id):
-    min_max_thresholds = settings['min_max_thresholds']['state']
     state = get_device_state(device_id)
 
-    for k,v in state.items():
-        # Add the min / max values.
-        try:
-            state[k] = {
-                "min": min_max_thresholds[k]["min"],
-                "max": min_max_thresholds[k]["max"],
-                "value": v,
-            }
-            if "name" in min_max_thresholds[k]:
-                state[k].update({"human_name": min_max_thresholds[k]["name"]})
-        except KeyError:
-            state[k] = v
     return state
 
 def get_device_state(device_id):
@@ -79,18 +66,7 @@ def set_device_variables(device_id, variables):
         redis.expire(device_key, settings["reset_timeout"])
 
 def get_device_variables_min_max(device_id):
-    min_max_thresholds = settings['min_max_thresholds']['variables']
     variables = get_device_variables(device_id)
-
-    for k,v in variables.items():
-        # Add the min / max values.
-        variables[k] = {
-            "min": min_max_thresholds[k]["min"],
-            "max": min_max_thresholds[k]["max"],
-            "value": v,
-        }
-        if "name" in min_max_thresholds[k]:
-            variables[k].update({"human_name": min_max_thresholds[k]["name"]})
     return variables
 
 def get_device_variables(device_id):
