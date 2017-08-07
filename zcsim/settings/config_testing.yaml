@@ -53,6 +53,8 @@ watson_iot_gateway:
 devices:
     - "device123"
 
+sim_system: 'tests.system'
+
 min_max_thresholds:
     variables:
         temp_out:
