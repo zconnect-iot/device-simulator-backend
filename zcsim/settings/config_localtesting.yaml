@@ -1,0 +1,56 @@
+logging:
+    # 'version' is required by logging library
+    version: 1
+    # can have multiple formatters and handlers
+    formatters:
+        default:
+            #format: "{asctime:s} {program:s} [{levelname:8s}]: ({name:s}:{lineno}) {message:s}"
+            #datefmt: "%b %d %H:%M:%S"
+            format: "[{levelname:8s}]: ({name:s}:{lineno}:{funcName:s}) {message:s}"
+            style: "{"
+    handlers:
+        stderr:
+            class: logging.StreamHandler
+            formatter: default
+    # Can specify a different logger for each file - this acts as the one for
+    # the whole module by specifying the 'propagate' keyword
+    loggers:
+        novogateway: &handle
+            handlers:
+              - stderr
+            level: TRACE
+            propagate: True
+        ibmiotf:
+            <<: *handle
+        __main__:
+            <<: *handle
+        coap:
+            <<: *handle
+
+redis:
+    connection:
+        username: admin
+        password: ''
+        host: redis
+        port: 6379
+
+auth:
+    jwt_secret_key: "JGkxhnGMU3kC7nA8jHVnQETrY6tYFCVdhrQt6NhXETUUf3JSGNnqb6egUWDGscQX"
+
+# The timestamp size in secconds
+timestep_size: 100
+
+# How often to send data to IBM:
+send_interval: 10
+
+# Reset simulation variables every X seconds
+reset_timeout: 0
+
+# settings for connecting to watson iot as a gateway
+watson_iot_gateway:
+    org: 124
+
+devices:
+    - "device123"
+
+sim_system: 'tests.system'
