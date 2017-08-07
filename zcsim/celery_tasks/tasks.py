@@ -1,7 +1,6 @@
 from .celery_app import app
 from celery.utils.log import get_task_logger
 from datetime import datetime, timedelta
-from math import exp
 
 from dateutil.relativedelta import relativedelta
 
@@ -20,40 +19,38 @@ from ..settings import get_settings
 
 from zcsim.util.task_base import WatsonIoTTaskBase
 
+from itertools import chain
+
+from zcsim.libsim.run import (
+    system_from_module,
+    one_step
+)
+
 logger = get_task_logger(__name__)
 
 
-def fridge_step(device_id, state, variables):
-    """Performs the timesteps
+def system_tables_defaults(syscfg):
+    return (
+        {k: k.start for k in syscfg['processes']},
+        {k: k.start for k in syscfg['properties']}
+    )
 
-    TODO: should be refactored in to some sort of device
-    simulation abstractions so that multiple device
-    types can be added easily.
-    """
-    settings = get_settings()
-    s = dict(state)
-    v = dict(variables)
 
-    tau = settings['timestep_size'] / 60#(60 * 60) # in hours
+def to_redis(process_t, prop_t):
+    return (
+        {k.name: v for k, v in process_t.items()},
+        {k.name: v for k, v in prop_t.items()}
+    )
 
-    #physics time
-    epsilon = exp(-(tau * v["insulation"]) / v["thermal_mass"])
-    T_i = epsilon * s["temp_in"] + (1 - epsilon) \
-            * (v["temp_out"] - v["efficiency"] * \
-                (s["present_current_draw"] / v["insulation"]))
 
-    if T_i >= s["temp_in_max"]:
-        s["present_current_draw"] = s["current_draw"] # Cool down
-
-    elif T_i <= s["temp_in_min"]:
-        s["present_current_draw"] = 0.0 # Stop cooling
-
-    s["temp_in"] = T_i
-    # Update things in state?
-    logger.debug("Device {}: {} {}".format(device_id, s, v))
-    logger.debug("Device {}: T_i: {:.2f}°C".format(device_id, T_i))
-
-    return (s, v)
+def from_redis(syscfg, redis_process_t, redis_prop_t):
+    obj_from = {
+        o.name: o for o in chain(syscfg['processes'], syscfg['properties'])
+    }
+    return (
+        {obj_from[k]: v for k, v in redis_process_t.items()},
+        {obj_from[k]: v for k, v in redis_prop_t.items()}
+    )
 
 def get_device_info(device_id):
     """Gets device state with defaults
@@ -66,38 +63,24 @@ def get_device_info(device_id):
     variables = things we can change as the simulation runs
 
     """
+    system = system_from_module(get_settings()['sim_system'])
     state = get_device_state(device_id)
     variables = get_device_variables(device_id)
+    default_state, default_props = to_redis(*system_tables_defaults(system))
 
     print("Variables were: {}".format(variables))
 
-    if not state.get("temp_in"):
+    if not state:
         logger.info("setting default device state")
-        state.update({
-            "temp_in": 5.0,
-            "current_draw": 70.0,
-            "temp_in_min": 3.0,
-            "temp_in_max": 5.0,
-            "present_current_draw": 0.0,
-        })
+        state = default_state
         set_device_state(device_id, state)
 
     if not variables:
         logger.info("setting default device variables")
-        variables = {
-            "temp_out": 21.0,
-            "insulation": 3.21,
-            "thermal_mass": 15.97,
-            "efficiency": 3.0,
-        }
+        variables = default_props
         set_device_variables(device_id, variables)
 
-    return (state, variables)
-
-def set_device_info(device_id, state, variables):
-    set_device_state(device_id, state)
-    # Variables should only be set by the user
-    #set_device_variables(device_id, variables)
+    return from_redis(system, state, variables) + (system['dependencies'],)
 
 def eval_device_time_step(device_id, up_to_time):
     """Checks a devices timestep and evaluates it needs running"""
@@ -110,9 +93,10 @@ def eval_device_time_step(device_id, up_to_time):
     while (now + time_step) < up_to_time:
         logger.info("doing TS step for {}".format(device_id))
         # Do a step of simulation
-        state, variables = get_device_info(device_id)
-        state, variables = fridge_step(device_id, state, variables)
-        set_device_info(device_id, state, variables)
+        state, variables, dependencies = get_device_info(device_id)
+        state = one_step(state, variables, dependencies,
+                         settings['timestep_size'])
+        set_device_state(device_id, to_redis(state, variables)[0])
         # Evaluate if we should send a TS data point to ZConnect platform
         # TODO
         last_send_time = get_last_send_time(device_id)
