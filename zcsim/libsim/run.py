@@ -4,6 +4,7 @@ from zcsim.libsim.models import (
     latest_sample
 )
 import importlib
+from functools import lru_cache
 
 def _shallow_dict_merge(d1, d2):
     return {k: v for k,v in chain(d1.items(), d2.items())}
@@ -32,6 +33,7 @@ MISSING_DEPS_ERRMSG = "Input dependencies for all " +\
     "processes must be defined. The following are missing: {}"
 
 
+@lru_cache()
 def system_from_module(name, object_name='system'):
     cfg = importlib.import_module(name)
     system = getattr(cfg, object_name)
