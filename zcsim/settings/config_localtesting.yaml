@@ -38,7 +38,7 @@ auth:
     jwt_secret_key: "JGkxhnGMU3kC7nA8jHVnQETrY6tYFCVdhrQt6NhXETUUf3JSGNnqb6egUWDGscQX"
 
 # The timestamp size in secconds
-timestep_size: 100
+timestep_size: 5
 
 # How often to send data to IBM:
 send_interval: 10
