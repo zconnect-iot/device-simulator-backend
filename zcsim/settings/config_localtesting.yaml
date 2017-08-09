@@ -29,9 +29,9 @@ logging:
 
 redis:
     connection:
-        username: admin
+        username: 'admin'
         password: ''
-        host: redis
+        host: 'redis'
         port: 6379
 
 auth:
