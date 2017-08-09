@@ -6,7 +6,7 @@ services:
             context: .
             dockerfile: Dockerfile.zcsimserver
         environment: &env
-            - ZCSIM_ENV=testing
+            - ZCSIM_ENV=localtesting
         ports:
             - "5000:5000"
         depends_on:
