@@ -53,4 +53,4 @@ watson_iot_gateway:
 devices:
     - "device123"
 
-sim_system: 'tests.system'
+sim_system: 'zcsim.settings.system'
