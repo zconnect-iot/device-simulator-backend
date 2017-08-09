@@ -47,9 +47,10 @@ def from_redis(syscfg, redis_process_t, redis_prop_t):
     obj_from = {
         o.name: o for o in chain(syscfg['processes'], syscfg['properties'])
     }
+    # TODO: get rid of magic keys leaking out of redis util
     return (
-        {obj_from[k]: v for k, v in redis_process_t.items()},
-        {obj_from[k]: v for k, v in redis_prop_t.items()}
+        {obj_from[k]: v for k, v in redis_process_t.items() if (k not in ('ts', 'send_ts'))},
+        {obj_from[k]: v for k, v in redis_prop_t.items() if (k not in ('ts', 'send_ts'))}
     )
 
 def get_device_info(device_id):
@@ -70,7 +71,8 @@ def get_device_info(device_id):
 
     print("Variables were: {}".format(variables))
 
-    if not state:
+    # TODO: get rid of magic keys leaking out of redis util
+    if all(k in ('ts', 'send_ts') for k in state.keys()):
         logger.info("setting default device state")
         state = default_state
         set_device_state(device_id, state)
