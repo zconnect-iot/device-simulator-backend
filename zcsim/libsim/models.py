@@ -10,6 +10,26 @@ from collections import namedtuple as T
 
 
 SimulationStep = T('SimulationStep', 'x0 u duration')
+ExternalVar = T('ExternalVar', 'unit name start')
+
+
+class Bounded(T('Bounded', 'var min max')):
+    def _ensure_in_range(self, v):
+        if v >= self.max:
+            return self.max
+        elif v <= self.min:
+            return self.min
+        else:
+            return v
+    def __getattr__(self, name):
+        """
+        Forward any unknown attributes to wrapped component
+        """
+        if name not in ('min', 'max'):
+            return getattr(self.var, name)
+    def __call__(self, sim_step):
+        ts, xs = self.var(sim_step)
+        return (ts, tuple(self._ensure_in_range(x) for x in xs))
 
 
 class FirstOrderVar(T('FirstOrderVar', 'name fuse_inputs gain time_constant')):
