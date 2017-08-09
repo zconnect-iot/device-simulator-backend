@@ -5,7 +5,7 @@ from ...settings import get_settings
 settings = get_settings()
 
 # get from main settings
-redis_settings = settings["redis"]
+redis_settings = settings["redis"]["connection"]
 
 if redis_settings.get("username", False):
     BROKER_URL = "redis://{username}:{password}@{host}:{port}".format(**redis_settings)
