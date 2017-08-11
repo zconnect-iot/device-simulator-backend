@@ -3,12 +3,12 @@ System definitions for the real simulation
 """
 
 from zcsim.libsim.models import (
-    External,
+    Property,
     FirstOrder,
     Bounded,
 )
-load = External(unit='kg', name='Load on shaft', start=0)
-engine_efficiency = External(unit='%', name='Engine efficiency', start=70)
+load = Property(unit='kg', name='Load on shaft', start=0)
+engine_efficiency = Property(unit='%', name='Engine efficiency', start=70)
 
 
 def input_current_fuse_inputs(engine_efficiency, load):

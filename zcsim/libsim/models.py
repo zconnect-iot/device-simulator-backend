@@ -2,7 +2,7 @@ import numpy
 from scipy.integrate import odeint
 from collections import namedtuple as T
 
-External = T('External', 'unit name start')
+Property = T('Property', 'unit name start')
 
 SimulationStep = T('SimulationStep', 'x0 inputs duration')
 
