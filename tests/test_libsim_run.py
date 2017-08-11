@@ -1,5 +1,6 @@
 from tests.system import (
     angular_velocity,
+    angular_velocity_tau,
     input_current,
     engine_efficiency,
     load,
@@ -25,7 +26,7 @@ def test_all_keys_present():
         engine_efficiency: 70
     }
     new_process_table = one_step(
-        process_table, user_table, deps, 5*angular_velocity.time_constant
+        process_table, user_table, deps, 5*angular_velocity_tau
     )
 
     assert set(new_process_table.keys()) == set(process_table.keys())
@@ -44,7 +45,7 @@ def test_new_process_table_each_key_stores_one_float():
         engine_efficiency: 70
     }
     new_process_table = one_step(
-        process_table, user_table, deps, 5*angular_velocity.time_constant
+        process_table, user_table, deps, 5*angular_velocity_tau
     )
     print(new_process_table)
 

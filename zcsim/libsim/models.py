@@ -25,9 +25,7 @@ class Bounded(T('Bounded', 'var min max')):
         return (ts, tuple(self._ensure_in_range(x) for x in xs))
 
 
-class FirstOrderVar(T(
-    'FirstOrderVar',
-    'name fuse_inputs gain time_constant start')):
+class FirstOrderVar(T('FirstOrderVar', 'name fuse_inputs start')):
     """
     @prop gain - DC gain of the system
     @prop time_constant - time after which the output is at 95% of the total
@@ -41,10 +39,10 @@ class FirstOrderVar(T(
                    time_step
         @param time_step - duration [0,time_step] of simulation
         """
-        u = self.fuse_inputs(*sim_step.inputs)
+        gain, time_constant, u = self.fuse_inputs(*sim_step.inputs)
         def model(x, t):
             """Solving x' = N*x + K*u for x"""
-            return (-x + self.gain * u)/self.time_constant
+            return (-x + gain * u)/time_constant
         # TODO: divide the timestamps in a smarter way
         ts = numpy.linspace(0, sim_step.duration, 100)
         xs = odeint(model, sim_step.x0, ts)
