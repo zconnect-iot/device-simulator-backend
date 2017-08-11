@@ -48,6 +48,14 @@ class FirstOrder(T('FirstOrder', 'name fuse_inputs start')):
         xs = odeint(model, sim_step.x0, ts)
         return (ts, tuple(el for el in xs[:, 0]))
 
+
+class LinearCombination(T('LinearCombination', 'coefficients')):
+    def __call__(self, sim_step):
+        return (
+            (sim_step.duration,),
+            (sum(c*v for c,v in zip(self.coefficients, sim_step.inputs)),)
+        )
+
 def latest_sample(sim_result):
     """
     Returns the variable value at the end of simulation step
