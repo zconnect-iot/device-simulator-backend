@@ -3,12 +3,12 @@ System definitions for the real simulation
 """
 
 from zcsim.libsim.models import (
-    ExternalVar,
-    FirstOrderVar,
+    External,
+    FirstOrder,
     Bounded,
 )
-load = ExternalVar(unit='kg', name='Load on shaft', start=0)
-engine_efficiency = ExternalVar(unit='%', name='Engine efficiency', start=70)
+load = External(unit='kg', name='Load on shaft', start=0)
+engine_efficiency = External(unit='%', name='Engine efficiency', start=70)
 
 
 def input_current_fuse_inputs(engine_efficiency, load):
@@ -19,13 +19,13 @@ def angular_velocity_fuse_inputs(input_current, load):
     return 5, 3, float(input_current)/float(load) if load > 0 else 0
 
 
-input_current = FirstOrderVar(
+input_current = FirstOrder(
     name='Current draw from mains',
     start=0,
     fuse_inputs=input_current_fuse_inputs,
 )
 
-angular_velocity = FirstOrderVar(
+angular_velocity = FirstOrder(
     name='RPM of shaft',
     start=0,
     fuse_inputs=angular_velocity_fuse_inputs

@@ -2,7 +2,7 @@ import numpy
 from scipy.integrate import odeint
 from collections import namedtuple as T
 
-ExternalVar = T('ExternalVar', 'unit name start')
+External = T('External', 'unit name start')
 
 SimulationStep = T('SimulationStep', 'x0 inputs duration')
 
@@ -25,7 +25,7 @@ class Bounded(T('Bounded', 'var min max')):
         return (ts, tuple(self._ensure_in_range(x) for x in xs))
 
 
-class FirstOrderVar(T('FirstOrderVar', 'name fuse_inputs start')):
+class FirstOrder(T('FirstOrder', 'name fuse_inputs start')):
     """
     @prop gain - DC gain of the system
     @prop time_constant - time after which the output is at 95% of the total
