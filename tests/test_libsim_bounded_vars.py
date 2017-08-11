@@ -12,7 +12,7 @@ def test_upper_bounds_ensured():
     """
     example_step = SimulationStep(
         x0=0,
-        u=15000,
+        inputs=(15000,1),
         duration=100
     )
     _, samples = bounded_angular_velocity(example_step)
@@ -24,7 +24,7 @@ def test_lower_bounds_ensured():
     """
     example_step = SimulationStep(
         x0=0,
-        u=-1,
+        inputs=(-1,1),
         duration=100
     )
     _, samples = bounded_angular_velocity(example_step)

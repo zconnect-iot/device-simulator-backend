@@ -4,7 +4,7 @@ from collections import namedtuple as T
 
 ExternalVar = T('ExternalVar', 'unit name start')
 
-SimulationStep = T('SimulationStep', 'x0 u duration')
+SimulationStep = T('SimulationStep', 'x0 inputs duration')
 
 class Bounded(T('Bounded', 'var min max')):
     def _ensure_in_range(self, v):
@@ -41,9 +41,10 @@ class FirstOrderVar(T(
                    time_step
         @param time_step - duration [0,time_step] of simulation
         """
+        u = self.fuse_inputs(*sim_step.inputs)
         def model(x, t):
             """Solving x' = N*x + K*u for x"""
-            return (-x + self.gain * sim_step.u)/self.time_constant
+            return (-x + self.gain * u)/self.time_constant
         # TODO: divide the timestamps in a smarter way
         ts = numpy.linspace(0, sim_step.duration, 100)
         xs = odeint(model, sim_step.x0, ts)
