@@ -98,7 +98,7 @@ def eval_device_time_step(device_id, up_to_time):
         state, variables, dependencies = get_device_info(device_id)
         # one second of real time equals a minute of sim time
         state = one_step(state, variables, dependencies,
-                         settings['timestep_size'] * 60)
+                         settings['timestep_size'] * settings['timestep_scale'])
         set_device_state(device_id, to_redis(state, variables)[0])
         # Evaluate if we should send a TS data point to ZConnect platform
         # TODO

@@ -40,6 +40,9 @@ auth:
 # The timestamp size in secconds
 timestep_size: 5
 
+# simulation step duration = timestep_size * timestep_scale
+timestep_scale: 60
+
 # How often to send data to IBM:
 send_interval: 10
 
