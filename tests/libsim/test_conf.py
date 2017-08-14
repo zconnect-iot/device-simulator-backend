@@ -1,4 +1,4 @@
-from zcsim.libsim.run import (
+from libsim.run import (
     system_from_module,
 )
 from tests.system import (

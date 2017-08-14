@@ -48,5 +48,6 @@ RUN pip3 install -r requirements.txt
 
 COPY bin .
 COPY zcsim .
+COPY libsim /app/libsim
 
 ENV PYTHONPATH ..

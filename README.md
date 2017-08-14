@@ -8,7 +8,7 @@ As a PoC (in both interpretations of the analogy), this is just for a fridge sim
 
 # Simulation
 
-The core simulation logic is implemented in `zcsim.libsim` package. It defines
+The core simulation logic is implemented in `libsim` package. It defines
 basic building blocks from which the user can compose complete systems for
 simulation.
 
@@ -80,7 +80,7 @@ type System = {
 
 Note that such abstraction allows for easily composing processes of orthogonal
 parts, as long as they all conform to the Process interface. For an example of
-that, see `zcsim.libsim.models.Bounded`.
+that, see `libsim.models.Bounded`.
 
 It's worth keeping in mind that due to the dependencies being declared outside
 of the actual process definitions, you have to make sure that their order in

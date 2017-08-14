@@ -1,4 +1,4 @@
-from zcsim.libsim.util import (
+from libsim.util import (
     within_top_margin,
     within_bottom_margin
 )

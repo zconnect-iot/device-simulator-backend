@@ -1,4 +1,4 @@
-from zcsim.libsim.models import (
+from libsim.models import (
     SimulationStep,
 )
 

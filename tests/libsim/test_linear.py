@@ -1,4 +1,4 @@
-from zcsim.libsim import models
+from libsim import models
 
 
 def test_coefficient_applied():

@@ -21,7 +21,7 @@ from zcsim.util.task_base import WatsonIoTTaskBase
 
 from itertools import chain
 
-from zcsim.libsim.run import (
+from libsim.run import (
     system_from_module,
     one_step
 )

@@ -1,5 +1,5 @@
 from itertools import chain
-from zcsim.libsim.models import (
+from libsim.models import (
     SimulationStep,
     latest_sample
 )

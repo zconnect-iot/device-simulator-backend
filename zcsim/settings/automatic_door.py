@@ -1,5 +1,5 @@
 from collections import namedtuple as T
-from zcsim.libsim import (models, util)
+from libsim import (models, util)
 
 motor_efficiency = models.Property(name='motor_efficiency', unit='%', start=70)
 fuse_blown = models.Property(name='fuse_blown', unit='[yes/no]', start=0)

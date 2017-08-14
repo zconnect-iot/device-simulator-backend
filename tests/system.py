@@ -2,7 +2,7 @@
 System definitions for test suite
 """
 
-from zcsim.libsim.models import (
+from libsim.models import (
     Property,
     FirstOrder,
     Bounded,
