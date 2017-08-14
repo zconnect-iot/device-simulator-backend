@@ -56,4 +56,4 @@ watson_iot_gateway:
 devices:
     - "device123"
 
-sim_system: 'zcsim.settings.automatic_door'
+sim_system: 'zcsim.settings.systems.automatic_door'
