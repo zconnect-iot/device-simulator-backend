@@ -6,6 +6,7 @@ from zcsim.libsim.models import (
     Property,
     FirstOrder,
     Bounded,
+    System
 )
 load = Property(unit='kg', name='Load on shaft', start=0)
 engine_efficiency = Property(unit='%', name='Engine efficiency', start=70)
@@ -32,11 +33,11 @@ angular_velocity = FirstOrder(
 )
 bounded_angular_velocity = Bounded(var=angular_velocity, min=0, max=15000)
 
-system = {
+system = System(**{
     'processes': (bounded_angular_velocity, input_current),
     'properties': (load, engine_efficiency),
     'dependencies': {
         bounded_angular_velocity: (input_current, load),
         input_current: (engine_efficiency, load)
     }
-}
+})

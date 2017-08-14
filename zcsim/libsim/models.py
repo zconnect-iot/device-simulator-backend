@@ -3,6 +3,7 @@ from scipy.integrate import odeint
 from collections import namedtuple as T
 
 Property = T('Property', 'unit name start')
+System = T('System', 'processes properties dependencies')
 
 SimulationStep = T('SimulationStep', 'x0 inputs duration')
 

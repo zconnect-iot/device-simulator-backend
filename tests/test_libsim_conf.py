@@ -10,7 +10,7 @@ import pytest
 
 def test_all_processes_should_have_inputs():
     system = system_from_module('tests.system')
-    assert set(system['processes']) == set(system['dependencies'].keys())
+    assert set(system.processes) == set(system.dependencies.keys())
 
 
 def test_error_raised_when_insufficient_inputs_defined():
@@ -19,8 +19,8 @@ def test_error_raised_when_insufficient_inputs_defined():
 
 
 def test_undefined_inputs_should_be_listed_in_error_msg():
-    missing_inputs = set(test_system['dependencies'].keys()) - \
-        set(incomplete_test_system['dependencies'].keys())
+    missing_inputs = set(test_system.dependencies.keys()) - \
+        set(incomplete_test_system.dependencies.keys())
     try:
         system_from_module('tests.system', 'incomplete_system')
     except ValueError as e:

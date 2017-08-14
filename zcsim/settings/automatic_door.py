@@ -79,7 +79,7 @@ current_in_right = models.FirstOrder(
 )
 
 
-system = {
+system = models.System(**{
     'processes': (
         door_position.left,
         door_position.right,
@@ -99,4 +99,4 @@ system = {
         current_in_left: (door_position.left, people_waiting),
         current_in_right: (door_position.right, people_waiting)
     }
-}
+})

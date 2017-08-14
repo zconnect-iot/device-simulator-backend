@@ -37,8 +37,8 @@ MISSING_DEPS_ERRMSG = "Input dependencies for all " +\
 def system_from_module(name, object_name='system'):
     cfg = importlib.import_module(name)
     system = getattr(cfg, object_name)
-    missing_inputs = set(system['processes']) - \
-        set(system['dependencies'].keys())
+    missing_inputs = set(system.processes) - \
+        set(system.dependencies.keys())
     if missing_inputs:
         raise ValueError(MISSING_DEPS_ERRMSG.format(
             ", ".join(i.name for i in missing_inputs)

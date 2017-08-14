@@ -31,8 +31,8 @@ logger = get_task_logger(__name__)
 
 def system_tables_defaults(syscfg):
     return (
-        {k: k.start for k in syscfg['processes']},
-        {k: k.start for k in syscfg['properties']}
+        {k: k.start for k in syscfg.processes},
+        {k: k.start for k in syscfg.properties}
     )
 
 
@@ -45,7 +45,7 @@ def to_redis(process_t, prop_t):
 
 def from_redis(syscfg, redis_process_t, redis_prop_t):
     obj_from = {
-        o.name: o for o in chain(syscfg['processes'], syscfg['properties'])
+        o.name: o for o in chain(syscfg.processes, syscfg.properties)
     }
     # TODO: get rid of magic keys leaking out of redis util
     return (
@@ -82,7 +82,7 @@ def get_device_info(device_id):
         variables = default_props
         set_device_variables(device_id, variables)
 
-    return from_redis(system, state, variables) + (system['dependencies'],)
+    return from_redis(system, state, variables) + (system.dependencies,)
 
 def eval_device_time_step(device_id, up_to_time):
     """Checks a devices timestep and evaluates it needs running"""

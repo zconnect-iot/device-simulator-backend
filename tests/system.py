@@ -6,6 +6,7 @@ from zcsim.libsim.models import (
     Property,
     FirstOrder,
     Bounded,
+    System,
 )
 load = Property(unit='kg', name='Load on shaft', start=0)
 engine_efficiency = Property(unit='%', name='Eff', start=70)
@@ -41,14 +42,10 @@ deps = {
     input_current: (engine_efficiency, load)
 }
 
-system = {
+system = System(**{
     'processes': (angular_velocity, bounded_angular_velocity, input_current),
     'properties': (load, engine_efficiency),
     'dependencies': deps,
-}
+})
 
-incomplete_system = {
-    'processes': system['processes'],
-    'properties': system['properties'],
-    'dependencies': dict()
-}
+incomplete_system = system._replace(dependencies=dict())
