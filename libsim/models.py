@@ -1,4 +1,7 @@
 import numpy
+from .util import (
+    single_sample
+)
 from scipy.integrate import odeint
 from collections import namedtuple as T
 
@@ -52,26 +55,21 @@ class FirstOrder(T('FirstOrder', 'name fuse_inputs start')):
 
 class LinearCombination(T('LinearCombination', 'coefficients')):
     def __call__(self, sim_step):
-        return (
-            (sim_step.duration,),
-            (sum(c*v for c,v in zip(self.coefficients, sim_step.inputs)),)
+        return single_sample(
+            sim_step.duration,
+            sum(c*v for c,v in zip(self.coefficients, sim_step.inputs))
         )
 
 
 class Counter(T('Counter', 'start step name')):
     def __call__(self, sim_step):
-        return (sim_step.duration, ), (sim_step.x0 + self.step, )
+        return single_sample(
+            sim_step.duration,
+            sim_step.x0 + self.step
+        )
 
 
 class ResetWhen(T('ResetWhen', 'var cond')):
     def __call__(self, sim_step):
         return self.var(sim_step) if not self.cond(*sim_step.inputs)\
-            else ((sim_step.duration,), (self.var.start,))
-
-def latest_sample(sim_result):
-    """
-    Returns the variable value at the end of simulation step
-    """
-    ts, xs = sim_result
-    # TODO: Change this when adding higher order variables
-    return xs[-1]
+            else single_sample(sim_step.duration, self.var.start)

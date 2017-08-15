@@ -1,7 +1,9 @@
 from libsim.models import (
     SimulationStep,
     ResetWhen,
-    latest_sample
+)
+from libsim.util import (
+    latest_sample,
 )
 
 sim_step = SimulationStep(x0=0, inputs=(0,), duration=1)

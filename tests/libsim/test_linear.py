@@ -1,4 +1,4 @@
-from libsim import models
+from libsim import (models, util)
 
 
 def test_coefficient_applied():
@@ -8,4 +8,4 @@ def test_coefficient_applied():
     )
     var = models.LinearCombination(coefficients)
 
-    assert models.latest_sample(var(step)) == 26
+    assert util.latest_sample(var(step)) == 26

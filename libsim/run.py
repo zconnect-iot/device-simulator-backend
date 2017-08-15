@@ -1,8 +1,6 @@
 from itertools import chain
-from libsim.models import (
-    SimulationStep,
-    latest_sample
-)
+from .models import SimulationStep
+from .util import latest_sample
 import importlib
 from functools import lru_cache
 
