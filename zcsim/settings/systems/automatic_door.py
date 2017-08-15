@@ -12,7 +12,8 @@ bearing_condition = T('BearingConditon', 'left right')(
 )
 
 
-def door_position_input(door_position_now, people_waiting, bearing_condition, current_in):
+def door_position_input(door_position_now, people_waiting, bearing_condition,
+                        current_in):
     """
     It should take from 2 to 30 seconds for the doors to almost close. Remaining
     error could be treated as sensor tolerance.
@@ -82,8 +83,14 @@ system = models.System(**{
         bearing_condition.right
     ),
     'dependencies': {
-        door_position.left: (door_position.left, people_waiting, bearing_condition.left, current_in_left),
-        door_position.right: (door_position.right, people_waiting, bearing_condition.right, current_in_right),
+        door_position.left: (
+            door_position.left, people_waiting, bearing_condition.left,
+            current_in_left
+        ),
+        door_position.right: (
+            door_position.right, people_waiting, bearing_condition.right,
+            current_in_right
+        ),
         current_in_left: (door_position.left, people_waiting),
         current_in_right: (door_position.right, people_waiting)
     }
