@@ -2,7 +2,9 @@ from libsim.util import (
     within_top_margin,
     within_bottom_margin,
     single_sample,
-    latest_sample
+    latest_sample,
+    neg,
+    predicate
 )
 
 
@@ -26,3 +28,25 @@ def test_single_sample():
 
 def test_latest_sample():
     assert latest_sample((tuple(range(20)), tuple(range(20,40)))) == 39
+
+
+@predicate
+def _truth():
+    return True
+
+
+@predicate
+def _false():
+    return False
+
+
+def test_neg():
+    false = neg(_truth)
+    assert not false()
+
+
+def test_predicate():
+    assert not (_truth & _false)()
+    assert (_false | _truth)()
+    assert (~_false)()
+    assert ((_truth & _false) | (_truth & _truth))()
