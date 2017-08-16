@@ -31,14 +31,27 @@ MISSING_DEPS_ERRMSG = "Input dependencies for all " +\
     "processes must be defined. The following are missing: {}"
 
 
+MISSING_SIGNALS_ERRMSG = (
+    "The following signals are used"
+    "as dependencies, but not defined as processes or properties: {}"
+)
+
+
 @lru_cache()
 def system_from_module(name, object_name='system'):
     cfg = importlib.import_module(name)
     system = getattr(cfg, object_name)
     missing_inputs = set(system.processes) - \
         set(system.dependencies.keys())
+    all_deps = chain(*(deps for _, deps in system.dependencies.items()))
+    all_signals = system.processes + system.properties
+    missing_signals = set(all_deps) - set(all_signals)
     if missing_inputs:
         raise ValueError(MISSING_DEPS_ERRMSG.format(
             ", ".join(i.name for i in missing_inputs)
+        ))
+    if missing_signals:
+        raise ValueError(MISSING_SIGNALS_ERRMSG.format(
+            ", ".join(s.name for s in missing_signals)
         ))
     return system

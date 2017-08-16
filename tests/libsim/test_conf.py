@@ -25,3 +25,16 @@ def test_undefined_inputs_should_be_listed_in_error_msg():
         system_from_module('tests.system', 'incomplete_system')
     except ValueError as e:
         assert all(i.name in str(e) for i in missing_inputs)
+
+
+def test_all_deps_should_be_signals():
+    with pytest.raises(ValueError):
+        system_from_module('tests.system', 'missing_signals')
+
+
+def test_undefined_signals_should_be_listed():
+    missing_signals = ('Eff',)
+    try:
+        system_from_module('tests.system', 'missing_signals')
+    except ValueError as e:
+        assert all(s in str(e) for s in missing_signals)

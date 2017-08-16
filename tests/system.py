@@ -49,3 +49,7 @@ system = System(**{
 })
 
 incomplete_system = system._replace(dependencies=dict())
+
+missing_signals = system._replace(
+    processes=(input_current, ), properties=(load,)
+)
