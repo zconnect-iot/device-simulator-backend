@@ -94,9 +94,10 @@ class PauseWhen(T('PauseWhen', 'var cond')):
             return getattr(self.var, name)
 
     def __call__(self, sim_step):
+        pause_on, *var_input = sim_step.inputs
         return (
-            self.var(sim_step._replace(inputs=sim_step.inputs[1:]))
-            if not self.cond(*sim_step.inputs)
+            self.var(sim_step._replace(inputs=var_input))
+            if not self.cond(pause_on)
             else single_sample(sim_step.duration, sim_step.x0)
         )
 

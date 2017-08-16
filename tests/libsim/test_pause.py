@@ -30,7 +30,7 @@ def test_process_interface():
     Should behave like a variable
     """
     var = PauseWhen(cond=never, var=model)
-    step = SimulationStep(x0=1, inputs=tuple(), duration=1)
+    step = SimulationStep(x0=1, inputs=(0,), duration=1)
 
     assert var.name == model.name
     assert var.start == model.start
@@ -53,5 +53,14 @@ def test_should_pass_down_input_tail():
         assert v1 == 1
         assert v2 == 2
     var = PauseWhen(cond=never, var=assert_inputs)
+    step = SimulationStep(x0=1, inputs=(0, 1, 2), duration=1)
+    var(step)
+
+
+def test_should_pass_first_input_var_to_predicate():
+    def pred(x):
+        assert x == 0
+        return False
+    var = PauseWhen(cond=pred, var=model)
     step = SimulationStep(x0=1, inputs=(0, 1, 2), duration=1)
     var(step)
