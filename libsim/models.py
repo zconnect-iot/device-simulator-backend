@@ -63,6 +63,11 @@ class Counter(T('Counter', 'start step name')):
         return (sim_step.duration, ), (sim_step.x0 + self.step, )
 
 
+class ResetWhen(T('ResetWhen', 'var cond')):
+    def __call__(self, sim_step):
+        return self.var(sim_step) if not self.cond(*sim_step.inputs)\
+            else ((sim_step.duration,), (self.var.start,))
+
 def latest_sample(sim_result):
     """
     Returns the variable value at the end of simulation step
