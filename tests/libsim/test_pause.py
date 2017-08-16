@@ -8,7 +8,7 @@ from libsim.util import (
 )
 
 
-def never():
+def never(*args):
     return False
 
 
@@ -45,3 +45,13 @@ def test_pauses():
     step = SimulationStep(x0=1, inputs=(1,), duration=1)
 
     assert latest_sample(var(step)) == 1
+
+
+def test_should_pass_down_input_tail():
+    def assert_inputs(sim_step):
+        v1, v2 = sim_step.inputs
+        assert v1 == 1
+        assert v2 == 2
+    var = PauseWhen(cond=never, var=assert_inputs)
+    step = SimulationStep(x0=1, inputs=(0, 1, 2), duration=1)
+    var(step)
