@@ -82,6 +82,19 @@ class ResetWhen(T('ResetWhen', 'var cond')):
             else single_sample(sim_step.duration, self.var.start)
 
 
+class PauseWhen(T('PauseWhen', 'var cond')):
+    def __getattr__(self, name):
+        """
+        Forward any unknown attributes to wrapped component
+        """
+        if name not in ('cond',):
+            return getattr(self.var, name)
+
+    def __call__(self, sim_step):
+        return self.var(sim_step) if not self.cond(*sim_step.inputs)\
+            else single_sample(sim_step.duration, sim_step.x0)
+
+
 class Boolean(T('Boolean', 'name start predicate')):
     def __call__(self, sim_step):
         return single_sample(
