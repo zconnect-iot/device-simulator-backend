@@ -21,6 +21,10 @@ model.name = 'flip-flop'
 model.start = 20
 
 
+def never(*args):
+    return False
+
+
 def test_reset():
     """
     Should be reset to starting value when condition met
@@ -35,3 +39,13 @@ def test_param_forwarding():
     Should behave like a variable
     """
     assert ResetWhen(var=model, cond=lambda: False).start == 20
+
+
+def test_should_pass_down_input_tail():
+    def assert_inputs(sim_step):
+        v1, v2 = sim_step.inputs
+        assert v1 == 1
+        assert v2 == 2
+    var = ResetWhen(cond=never, var=assert_inputs)
+    step = SimulationStep(x0=1, inputs=(0, 1, 2), duration=1)
+    var(step)
