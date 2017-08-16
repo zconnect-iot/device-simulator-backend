@@ -57,6 +57,12 @@ class LinearCombination(T('LinearCombination', 'coefficients')):
             (sum(c*v for c,v in zip(self.coefficients, sim_step.inputs)),)
         )
 
+
+class Counter(T('Counter', 'start step name')):
+    def __call__(self, sim_step):
+        return (sim_step.duration, ), (sim_step.x0 + self.step, )
+
+
 def latest_sample(sim_result):
     """
     Returns the variable value at the end of simulation step
