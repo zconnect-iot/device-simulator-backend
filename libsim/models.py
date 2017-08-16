@@ -80,3 +80,11 @@ class ResetWhen(T('ResetWhen', 'var cond')):
     def __call__(self, sim_step):
         return self.var(sim_step) if not self.cond(*sim_step.inputs)\
             else single_sample(sim_step.duration, self.var.start)
+
+
+class Boolean(T('Boolean', 'name start predicate')):
+    def __call__(self, sim_step):
+        return single_sample(
+            sim_step.duration,
+            1 if self.predicate(sim_step.x0, sim_step.inputs) else 0
+        )
