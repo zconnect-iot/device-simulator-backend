@@ -49,3 +49,12 @@ def test_should_pass_down_input_tail():
     var = ResetWhen(cond=never, var=assert_inputs)
     step = SimulationStep(x0=1, inputs=(0, 1, 2), duration=1)
     var(step)
+
+
+def test_should_call_predicate_with_first_input_only():
+    def pred(x):
+        assert x == 0
+        return False
+    var = ResetWhen(cond=pred, var=model)
+    step = SimulationStep(x0=1, inputs=(0, 1, 2), duration=1)
+    var(step)

@@ -78,9 +78,10 @@ class ResetWhen(T('ResetWhen', 'var cond')):
             return getattr(self.var, name)
 
     def __call__(self, sim_step):
+        reset_on, *_ = sim_step.inputs
         return (
             self.var(sim_step._replace(inputs=sim_step.inputs[1:]))
-            if not self.cond(*sim_step.inputs)
+            if not self.cond(reset_on)
             else single_sample(sim_step.duration, self.var.start)
         )
 
