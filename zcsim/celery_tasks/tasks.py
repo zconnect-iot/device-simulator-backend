@@ -69,7 +69,8 @@ def get_device_info(device_id):
     variables = get_device_variables(device_id)
     default_state, default_props = to_redis(*system_tables_defaults(system))
 
-    print("Variables were: {}".format(variables))
+    print("Properties were: {}".format(variables))
+    print("Processes were: {}".format(state))
 
     # TODO: get rid of magic keys leaking out of redis util
     if all(k in ('ts', 'send_ts') for k in state.keys()):
