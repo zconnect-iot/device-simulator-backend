@@ -4,6 +4,7 @@ from libsim.util import (
     within_bottom_margin,
     within_top_margin,
     predicate,
+    range_transform,
 )
 from functools import partial
 
@@ -28,7 +29,7 @@ def door_position_input(people_waiting, bearing_condition):
     error could be treated as sensor tolerance.
     """
     # linear transformation (0,100) -> (2,30)
-    time_constant = (-28.0 * float(bearing_condition) + 3000.0) / 100.0
+    time_constant = range_transform((0, 100), (2, 30))(float(bearing_condition))
     gain = 10
     if people_waiting:
         return gain, time_constant, 1
