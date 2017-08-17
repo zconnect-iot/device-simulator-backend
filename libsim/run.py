@@ -4,8 +4,9 @@ from .util import latest_sample
 import importlib
 from functools import lru_cache
 
+
 def _shallow_dict_merge(d1, d2):
-    return {k: v for k,v in chain(d1.items(), d2.items())}
+    return {k: v for k, v in chain(d1.items(), d2.items())}
 
 
 def one_step(process_table, props_table, dependencies_table, duration):
@@ -27,12 +28,14 @@ def one_step(process_table, props_table, dependencies_table, duration):
     return new_process_table
 
 
-MISSING_DEPS_ERRMSG = "Input dependencies for all " +\
+MISSING_DEPS_ERRMSG = (
+    "Input dependencies for all "
     "processes must be defined. The following are missing: {}"
+)
 
 
 MISSING_SIGNALS_ERRMSG = (
-    "The following signals are used"
+    "The following signals are used "
     "as dependencies, but not defined as processes or properties: {}"
 )
 
@@ -41,8 +44,9 @@ MISSING_SIGNALS_ERRMSG = (
 def system_from_module(name, object_name='system'):
     cfg = importlib.import_module(name)
     system = getattr(cfg, object_name)
-    missing_inputs = set(system.processes) - \
-        set(system.dependencies.keys())
+    missing_inputs = (
+        set(system.processes) - set(system.dependencies.keys())
+    )
     all_deps = chain(*(deps for _, deps in system.dependencies.items()))
     all_signals = system.processes + system.properties
     missing_signals = set(all_deps) - set(all_signals)

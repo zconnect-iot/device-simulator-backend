@@ -10,6 +10,7 @@ System = T('System', 'processes properties dependencies')
 
 SimulationStep = T('SimulationStep', 'x0 inputs duration')
 
+
 class Bounded(T('Bounded', 'var min max')):
     def _ensure_in_range(self, v):
         if v >= self.max:
@@ -18,12 +19,14 @@ class Bounded(T('Bounded', 'var min max')):
             return self.min
         else:
             return v
+
     def __getattr__(self, name):
         """
         Forward any unknown attributes to wrapped component
         """
         if name not in ('min', 'max'):
             return getattr(self.var, name)
+
     def __call__(self, sim_step):
         ts, xs = self.var(sim_step)
         return (ts, tuple(self._ensure_in_range(x) for x in xs))
@@ -44,6 +47,7 @@ class FirstOrder(T('FirstOrder', 'name fuse_inputs start')):
         @param time_step - duration [0,time_step] of simulation
         """
         gain, time_constant, u = self.fuse_inputs(*sim_step.inputs)
+
         def model(x, t):
             """Solving x' = N*x + K*u for x"""
             return (-x + gain * u)/time_constant
@@ -57,7 +61,7 @@ class LinearCombination(T('LinearCombination', 'coefficients')):
     def __call__(self, sim_step):
         return single_sample(
             sim_step.duration,
-            sum(c*v for c,v in zip(self.coefficients, sim_step.inputs))
+            sum(c*v for c, v in zip(self.coefficients, sim_step.inputs))
         )
 
 

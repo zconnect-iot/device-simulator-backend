@@ -57,13 +57,22 @@ door_position = T('DoorPosition', 'left right')(
 def current_in_inputs(door_position, people_waiting):
     gain = 5
     time_constant = 0.2
-    door_should_open = people_waiting\
-        and not within_top_margin(0, 10, 0.05, door_position)
-    door_should_close = not people_waiting\
-        and not within_bottom_margin(0, 10, 0.05, door_position)
+    door_should_open = (
+        people_waiting
+        and
+        not within_top_margin(0, 10, 0.05, door_position)
+    )
+    door_should_close = (
+        not people_waiting
+        and
+        not within_bottom_margin(0, 10, 0.05, door_position)
+    )
     should_spin = door_should_open or door_should_close
-    return (gain, time_constant, 1) if should_spin\
-        else (gain, time_constant, 0)
+    return (
+        (gain, time_constant, 1)
+        if should_spin else
+        (gain, time_constant, 0)
+    )
 
 
 current = T('Current', 'left right')(
