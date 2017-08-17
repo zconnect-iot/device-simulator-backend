@@ -30,4 +30,6 @@ services:
             - redis
 
     redis:
-        image: "redis:alpine"
+        build:
+            context: .
+            dockerfile: Dockerfile.redis

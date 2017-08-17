@@ -1,0 +1,22 @@
+FROM redis:alpine
+
+ENV REJSON_GIT_TAG master
+
+COPY tools/install-rejson.sh /tools/install-rejson.sh
+
+RUN set -xe;\
+    apk add --no-cache --virtual .build-deps \
+        coreutils \
+        gcc \
+        linux-headers \
+        make \
+        musl-dev \
+        git \
+        ; \
+    /tools/install-rejson.sh "${REJSON_GIT_TAG}" /rejson ;\
+    apk del .build-deps ;
+
+RUN mkdir -p /etc/redis \
+    && echo 'loadmodule /rejson/src/rejson.so' > /etc/redis/redis.conf
+
+CMD ["redis-server", "/etc/redis/redis.conf"]
