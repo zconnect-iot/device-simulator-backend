@@ -54,3 +54,15 @@ class Predicate(T('Predicate', 'f')):
 
 def predicate(f):
     return wraps(f)(Predicate(f))
+
+
+def range_transform(_from, to):
+    a, b = _from
+    c, d = to
+    if a == b:
+        raise ValueError("Expected input range to be valid")
+
+    def _(v):
+        return v*(d-c)/(b-a) + c - a*(d-c)/(b-a)
+
+    return _
