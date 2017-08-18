@@ -113,3 +113,20 @@ class Boolean(T('Boolean', 'name start predicate')):
             sim_step.duration,
             1 if self.predicate(sim_step.x0, sim_step.inputs) else 0
         )
+
+
+class OnOffController(T('OnOffController', 'name start hyst on off')):
+    def __call__(self, sim_step):
+        signal, set_point = sim_step.inputs
+        upper_bound, lower_bound = set_point + self.hyst, set_point - self.hyst
+        # handle out-of-bounds signal first
+        if signal > upper_bound:
+            return single_sample(sim_step.duration, self.off)
+        if signal < lower_bound:
+            return single_sample(sim_step.duration, self.on)
+        # now signal is within bounds for sure
+        if sim_step.x0 == self.on:
+            val = self.on if signal >= lower_bound else self.off
+        else:
+            val = self.off if signal <= upper_bound else self.on
+        return single_sample(sim_step.duration, val)
