@@ -4,7 +4,9 @@ from libsim.models import (
 )
 from libsim.util import (
     latest_sample,
-    single_sample
+)
+from tests.helpers import (
+    create_flip_flop_model
 )
 
 
@@ -16,13 +18,7 @@ def id(x):
     return x
 
 
-def model(sim_step):
-    val = 0 if sim_step.x0 else 1
-    return single_sample(sim_step.duration, val)
-
-
-model.name = 'flip-flop'
-model.start = 0
+model = create_flip_flop_model(start=0, flip=0, flop=1)
 
 
 def test_process_interface():
