@@ -10,6 +10,12 @@ System = T('System', 'processes properties dependencies')
 
 SimulationStep = T('SimulationStep', 'x0 inputs duration')
 
+_signal_fields = ('name', 'human_name', 'start')
+
+
+def signal_fields(fields):
+    return _signal_fields + tuple(fields.split())
+
 
 class Bounded(T('Bounded', 'var min max')):
     def _ensure_in_range(self, v):
@@ -32,7 +38,7 @@ class Bounded(T('Bounded', 'var min max')):
         return (ts, tuple(self._ensure_in_range(x) for x in xs))
 
 
-class FirstOrder(T('FirstOrder', 'name fuse_inputs start')):
+class FirstOrder(T('FirstOrder', signal_fields('fuse_inputs'))):
     """
     @prop gain - DC gain of the system
     @prop time_constant - time after which the output is at 95% of the total
@@ -57,7 +63,7 @@ class FirstOrder(T('FirstOrder', 'name fuse_inputs start')):
         return (ts, tuple(el for el in xs[:, 0]))
 
 
-class LinearCombination(T('LinearCombination', 'coefficients')):
+class LinearCombination(T('LinearCombination', signal_fields('coefficients'))):
     def __call__(self, sim_step):
         return single_sample(
             sim_step.duration,
@@ -65,7 +71,7 @@ class LinearCombination(T('LinearCombination', 'coefficients')):
         )
 
 
-class Counter(T('Counter', 'start step name')):
+class Counter(T('Counter', signal_fields('step'))):
     def __call__(self, sim_step):
         return single_sample(
             sim_step.duration,
@@ -107,7 +113,7 @@ class PauseWhen(T('PauseWhen', 'var cond')):
         )
 
 
-class Boolean(T('Boolean', 'name start predicate')):
+class Boolean(T('Boolean', signal_fields('predicate'))):
     def __call__(self, sim_step):
         return single_sample(
             sim_step.duration,
@@ -115,7 +121,7 @@ class Boolean(T('Boolean', 'name start predicate')):
         )
 
 
-class OnOffController(T('OnOffController', 'name start hyst on off')):
+class OnOffController(T('OnOffController', signal_fields('hyst on off'))):
     def __call__(self, sim_step):
         signal, set_point = sim_step.inputs
         upper_bound, lower_bound = set_point + self.hyst, set_point - self.hyst

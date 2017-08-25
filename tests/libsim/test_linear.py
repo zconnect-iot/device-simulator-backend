@@ -6,6 +6,8 @@ def test_coefficient_applied():
     step = models.SimulationStep(
         x0=0, duration=100, inputs=(3, 4, 5)
     )
-    var = models.LinearCombination(coefficients)
+    var = models.LinearCombination(
+        name='', human_name='', start=0, coefficients=coefficients
+    )
 
     assert util.latest_sample(var(step)) == 26

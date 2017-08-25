@@ -24,13 +24,15 @@ def angular_velocity_fuse_inputs(input_current, load):
 
 
 input_current = FirstOrder(
-    name='Current draw from mains',
+    name='input-current',
+    human_name='Current draw from mains',
     start=0,
     fuse_inputs=input_current_fuse_inputs,
 )
 
 angular_velocity = FirstOrder(
-    name='RPM of shaft',
+    name='angular-velocity',
+    human_name='RPM of shaft',
     start=0,
     fuse_inputs=angular_velocity_fuse_inputs
 )
