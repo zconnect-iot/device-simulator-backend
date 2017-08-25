@@ -16,11 +16,25 @@ thermostat = OnOffController(
 )
 thermostat_cooling = 1
 thermostat_disabled = 0
-set_point = Property(name='set-point', start=5, unit='deg. C')
-ambient_temp = Property(name='ambient-temp', start=25, unit='deg. C')
-hot_pipe_leak = Property(name='hot-pipe-leak', start=0, unit='0/1')
-cold_pipe_leak = Property(name='cold-pipe-leak', start=0, unit='0/1')
-door_opened = Property(name='door-opened', start=0, unit='0/1')
+set_point = Property(
+    human_name='Cooling temperature',
+    name='set-point', start=5, unit='deg. C'
+)
+ambient_temp = Property(
+    human_name='Ambient temperature',
+    name='ambient-temp', start=25, unit='deg. C'
+)
+hot_pipe_leak = Property(
+    human_name='Is used cooling liquid pipe leaking?',
+    name='hot-pipe-leak', start=0, unit='0/1'
+)
+cold_pipe_leak = Property(
+    human_name='Is fresh cooling liquid pipe leaking?',
+    name='cold-pipe-leak', start=0, unit='0/1'
+)
+door_opened = Property(
+    human_name='Are door opened?',
+    name='door-opened', start=0, unit='0/1')
 
 
 def hct_fi(is_leaking, thermostat, ambient_temp):
