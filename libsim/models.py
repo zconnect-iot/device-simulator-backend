@@ -5,7 +5,6 @@ from .util import (
 from scipy.integrate import odeint
 from collections import namedtuple as T
 
-Property = T('Property', 'unit name start')
 System = T('System', 'processes properties dependencies')
 
 SimulationStep = T('SimulationStep', 'x0 inputs duration')
@@ -15,6 +14,9 @@ _signal_fields = ('name', 'human_name', 'start')
 
 def signal_fields(fields):
     return _signal_fields + tuple(fields.split())
+
+
+Property = T('Property', signal_fields('unit'))
 
 
 class Bounded(T('Bounded', 'var min max')):

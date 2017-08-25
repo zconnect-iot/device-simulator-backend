@@ -8,8 +8,10 @@ from libsim.models import (
     Bounded,
     System,
 )
-load = Property(unit='kg', name='Load on shaft', start=0)
-engine_efficiency = Property(unit='%', name='Eff', start=70)
+load = Property(name='load', unit='kg', human_name='Load on shaft', start=0)
+engine_efficiency = Property(
+    name='engine-efficiency', unit='%', human_name='Eff', start=70
+)
 
 
 def input_current_fuse_inputs(engine_efficiency, load):

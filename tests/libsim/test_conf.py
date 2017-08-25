@@ -35,7 +35,7 @@ def test_all_deps_should_be_signals():
 
 
 def test_undefined_signals_should_be_listed():
-    missing_signals = ('Eff',)
+    missing_signals = ('engine-efficiency',)
     try:
         system_from_module('tests.system', 'missing_signals')
     except ValueError as e:
