@@ -2,7 +2,16 @@ from collections import namedtuple as T
 from .util import single_sample
 
 
-class Bounded(T('Bounded', 'var min max')):
+class __Base():
+    def __getattr__(self, name):
+        """
+        Forward any unknown attributes to wrapped component
+        """
+        if name not in (set(self._fields) - set(('var',))):
+            return getattr(self.var, name)
+
+
+class Bounded(__Base, T('Bounded', 'var min max')):
     def _ensure_in_range(self, v):
         if v >= self.max:
             return self.max
@@ -10,13 +19,6 @@ class Bounded(T('Bounded', 'var min max')):
             return self.min
         else:
             return v
-
-    def __getattr__(self, name):
-        """
-        Forward any unknown attributes to wrapped component
-        """
-        if name not in ('min', 'max'):
-            return getattr(self.var, name)
 
     def __call__(self, sim_step):
         ts, xs = self.var(sim_step)
@@ -29,14 +31,7 @@ def bounded(min, max):
     return get
 
 
-class ResetWhen(T('ResetWhen', 'var cond')):
-    def __getattr__(self, name):
-        """
-        Forward any unknown attributes to wrapped component
-        """
-        if name not in ('cond',):
-            return getattr(self.var, name)
-
+class ResetWhen(__Base, T('ResetWhen', 'var cond')):
     def __call__(self, sim_step):
         reset_on, *var_inputs = sim_step.inputs
         return (
@@ -52,14 +47,7 @@ def reset_when(cond):
     return get
 
 
-class PauseWhen(T('PauseWhen', 'var cond')):
-    def __getattr__(self, name):
-        """
-        Forward any unknown attributes to wrapped component
-        """
-        if name not in ('cond',):
-            return getattr(self.var, name)
-
+class PauseWhen(__Base, T('PauseWhen', 'var cond')):
     def __call__(self, sim_step):
         pause_on, *var_input = sim_step.inputs
         return (
