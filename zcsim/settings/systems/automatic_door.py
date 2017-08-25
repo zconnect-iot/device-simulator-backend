@@ -41,6 +41,7 @@ door_position = T('DoorPosition', 'left right')(
     left=models.PauseWhen(
         cond=current_in_green_zone,
         var=models.FirstOrder(
+            human_name="Left door position sensor",
             name='door_position_left', start=0,
             fuse_inputs=door_position_input
         )
@@ -48,6 +49,7 @@ door_position = T('DoorPosition', 'left right')(
     right=models.PauseWhen(
         cond=current_in_green_zone,
         var=models.FirstOrder(
+            human_name="Right door position sensor",
             name='door_position_right', start=0,
             fuse_inputs=door_position_input
         )
@@ -82,6 +84,7 @@ current = T('Current', 'left right')(
         var=models.Bounded(
             min=0, max=5,
             var=models.FirstOrder(
+                human_name="Current drawn from mains (left door)",
                 name='current_in_left',
                 start=0,
                 fuse_inputs=current_in_inputs
@@ -93,6 +96,7 @@ current = T('Current', 'left right')(
         var=models.Bounded(
             min=0, max=5,
             var=models.FirstOrder(
+                human_name="Current drawn from mains (right door)",
                 name='current_in_right',
                 start=0,
                 fuse_inputs=current_in_inputs
@@ -106,12 +110,14 @@ overheat = T('Overheat', 'left right')(
     left=models.ResetWhen(
         cond=current_in_green_zone,
         var=models.Counter(
+            human_name="Time left until left motor fails",
             name='overheat_countdown_left', start=20, step=-1
         ),
     ),
     right=models.ResetWhen(
         cond=current_in_green_zone,
         var=models.Counter(
+            human_name="Time left until right motor fails",
             name='overheat_countdown_right', start=20, step=-1
         ),
     )
@@ -128,6 +134,7 @@ def is_fuse_blown(x0, inputs):
 
 
 fuse_blown = models.Boolean(
+    human_name="Motor failure",
     name='fuse_blown',
     predicate=is_fuse_blown,
     start=0
