@@ -23,6 +23,12 @@ class Bounded(T('Bounded', 'var min max')):
         return (ts, tuple(self._ensure_in_range(x) for x in xs))
 
 
+def bounded(min, max):
+    def get(var):
+        return Bounded(var=var, min=min, max=max)
+    return get
+
+
 class ResetWhen(T('ResetWhen', 'var cond')):
     def __getattr__(self, name):
         """
@@ -40,6 +46,12 @@ class ResetWhen(T('ResetWhen', 'var cond')):
         )
 
 
+def reset_when(cond):
+    def get(var):
+        return ResetWhen(var=var, cond=cond)
+    return get
+
+
 class PauseWhen(T('PauseWhen', 'var cond')):
     def __getattr__(self, name):
         """
@@ -55,3 +67,9 @@ class PauseWhen(T('PauseWhen', 'var cond')):
             if not self.cond(pause_on)
             else single_sample(sim_step.duration, sim_step.x0)
         )
+
+
+def pause_when(cond):
+    def get(var):
+        return PauseWhen(var=var, cond=cond)
+    return get

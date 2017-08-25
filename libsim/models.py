@@ -3,9 +3,9 @@ from .util import (
     single_sample
 )
 from .filters import (
-    Bounded,
-    PauseWhen,
-    ResetWhen,
+    Bounded, bounded,
+    PauseWhen, pause_when,
+    ResetWhen, reset_when,
 )
 from scipy.integrate import odeint
 from collections import namedtuple as T

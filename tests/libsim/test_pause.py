@@ -1,5 +1,5 @@
 from libsim.models import (
-    PauseWhen,
+    PauseWhen, pause_when,
     SimulationStep
 )
 from libsim.util import (
@@ -60,3 +60,7 @@ def test_should_pass_first_input_var_to_predicate():
     var = PauseWhen(cond=pred, var=model)
     step = SimulationStep(x0=1, inputs=(0, 1, 2), duration=1)
     var(step)
+
+
+def test_factory():
+    assert never == pause_when(never)(model).cond

@@ -1,5 +1,5 @@
 from libsim.models import (
-    ResetWhen,
+    ResetWhen, reset_when,
     SimulationStep
 )
 from libsim.util import (
@@ -52,3 +52,7 @@ def test_should_call_predicate_with_first_input_only():
     var = ResetWhen(cond=pred, var=model)
     step = SimulationStep(x0=1, inputs=(0, 1, 2), duration=1)
     var(step)
+
+
+def test_factory():
+    assert never == reset_when(never)(model).cond
