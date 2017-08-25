@@ -7,6 +7,7 @@ from libsim.models import (
 )
 
 thermostat = OnOffController(
+    human_name='Fridge off?',
     name='thermostat',
     start=0,
     hyst=0.5,
@@ -55,23 +56,29 @@ def ci_fi(cold_pipe_leak, hot_pipe_leak):
 
 
 hot_coolant_temp = FirstOrder(
+    human_name="""Temperature of fresh cooling fluid""",
     name='hot-coolant-temp',
     start=ambient_temp.start,
     fuse_inputs=hct_fi
 )
 cold_coolant_temp = FirstOrder(
+    human_name="""Temperature of used cooling fluid""",
     name='cold-coolant-temp',
     start=ambient_temp.start,
     fuse_inputs=cct_fi
 )
 box_temp = FirstOrder(
+    human_name="""Temperature inside the fridge""",
     name='box-temp',
     start=ambient_temp.start,
     fuse_inputs=bt_fi
 )
 current_in = ResetWhen(
     cond=lambda ctrl: ctrl == thermostat_disabled,
-    var=FirstOrder(name='current-in', start=0, fuse_inputs=ci_fi)
+    var=FirstOrder(
+        human_name="""Current drawn from mains""",
+        name='current-in', start=0, fuse_inputs=ci_fi
+    )
 )
 
 
