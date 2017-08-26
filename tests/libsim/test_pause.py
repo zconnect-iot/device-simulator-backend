@@ -1,6 +1,8 @@
 from libsim.models import (
-    PauseWhen, pause_when,
     SimulationStep
+)
+from libsim.features import (
+    Paused,
 )
 from libsim.util import (
     latest_sample,
@@ -25,7 +27,7 @@ def test_process_interface():
     """
     Should behave like a variable
     """
-    var = PauseWhen(cond=never, var=model)
+    var = model & Paused.by(never)
     step = SimulationStep(x0=1, inputs=(0,), duration=1)
 
     assert var.name == model.name
@@ -37,7 +39,7 @@ def test_pauses():
     """
     Should not flip when paused
     """
-    var = PauseWhen(cond=id, var=model)
+    var = model & Paused.by(id)
     step = SimulationStep(x0=1, inputs=(1,), duration=1)
 
     assert latest_sample(var(step)) == 1
@@ -48,7 +50,7 @@ def test_should_pass_down_input_tail():
         v1, v2 = sim_step.inputs
         assert v1 == 1
         assert v2 == 2
-    var = PauseWhen(cond=never, var=assert_inputs)
+    var = Paused.by(never)(assert_inputs)
     step = SimulationStep(x0=1, inputs=(0, 1, 2), duration=1)
     var(step)
 
@@ -57,10 +59,6 @@ def test_should_pass_first_input_var_to_predicate():
     def pred(x):
         assert x == 0
         return False
-    var = PauseWhen(cond=pred, var=model)
+    var = model & Paused.by(pred)
     step = SimulationStep(x0=1, inputs=(0, 1, 2), duration=1)
     var(step)
-
-
-def test_factory():
-    assert never == pause_when(never)(model).cond
