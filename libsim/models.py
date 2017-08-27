@@ -111,9 +111,5 @@ def OnOffController(props, sim_step):
         return single_sample(sim_step.duration, props.off)
     if signal < lower_bound:
         return single_sample(sim_step.duration, props.on)
-    # now signal is within bounds for sure
-    if sim_step.x0 == props.on:
-        val = props.on if signal >= lower_bound else props.off
     else:
-        val = props.off if signal <= upper_bound else props.on
-    return single_sample(sim_step.duration, val)
+        return single_sample(sim_step.duration, sim_step.x0)
