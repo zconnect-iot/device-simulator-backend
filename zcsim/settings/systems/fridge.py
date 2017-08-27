@@ -1,9 +1,17 @@
 from libsim.models import (
     OnOffController,
     FirstOrder,
-    ResetWhen,
     Property,
     System,
+)
+from libsim.features import (
+    Reset,
+)
+from functools import (
+    partial,
+)
+from operator import (
+    eq,
 )
 
 thermostat = OnOffController(
@@ -87,12 +95,11 @@ box_temp = FirstOrder(
     start=ambient_temp.start,
     fuse_inputs=bt_fi
 )
-current_in = ResetWhen(
-    cond=lambda ctrl: ctrl == thermostat_disabled,
-    var=FirstOrder(
-        human_name="""Current drawn from mains""",
-        name='current-in', start=0, fuse_inputs=ci_fi
-    )
+current_in = FirstOrder(
+    human_name="""Current drawn from mains""",
+    name='current-in', start=0, fuse_inputs=ci_fi
+) & (
+    Reset.by(partial(eq, thermostat_disabled))
 )
 
 
