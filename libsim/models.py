@@ -5,136 +5,111 @@ from .util import (
 from scipy.integrate import odeint
 from collections import namedtuple as T
 
+
+def signal_fields(custom_fields=None):
+    _signal_fields = ('name', 'human_name', 'start')
+    custom_fields = custom_fields or ''
+    return _signal_fields + tuple(custom_fields.split())
+
+
 System = T('System', 'processes properties dependencies')
-
 SimulationStep = T('SimulationStep', 'x0 inputs duration')
-
-_signal_fields = ('name', 'human_name', 'start')
-
-
-def signal_fields(fields):
-    return _signal_fields + tuple(fields.split())
-
-
 Property = T('Property', signal_fields('unit'))
 
 
-class Bounded(T('Bounded', 'var min max')):
-    def _ensure_in_range(self, v):
-        if v >= self.max:
-            return self.max
-        elif v <= self.min:
-            return self.min
-        else:
-            return v
-
-    def __getattr__(self, name):
+class ModelMixin():
+    def __and__(self, feature_or_features):
         """
-        Forward any unknown attributes to wrapped component
+        @feature_or_features is an iterable or a single element
         """
-        if name not in ('min', 'max'):
-            return getattr(self.var, name)
+        try:  # @feature_or_features is a single callable
+            feature = feature_or_features
+            return feature(self)
+        except TypeError:
+            pass
+        features = iter(feature_or_features)
+        try:
+            head = next(features)
+            return head(self) & features
+        except StopIteration:
+            return self
 
-    def __call__(self, sim_step):
-        ts, xs = self.var(sim_step)
-        return (ts, tuple(self._ensure_in_range(x) for x in xs))
+
+def model_type(custom_fields=None):
+    def decorate(f):
+        bases = (
+            ModelMixin,
+            T(f.__name__ + '_props', signal_fields(custom_fields)),
+        )
+
+        def invoke_model(self, sim_step):
+            try:
+                return f(self, sim_step)
+            except TypeError:
+                return f(sim_step)
+
+        return type(f.__name__, bases, {'__call__': invoke_model})
+    return decorate
 
 
-class FirstOrder(T('FirstOrder', signal_fields('fuse_inputs'))):
+def model(name, human_name, start):
+    def decorate(f):
+        return model_type()(f)(name=name, human_name=human_name, start=start)
+    return decorate
+
+
+@model_type('fuse_inputs')
+def FirstOrder(props, sim_step):
     """
-    @prop gain - DC gain of the system
-    @prop time_constant - time after which the output is at 95% of the total
-                            step response.
+    Compute the output of a first-order dynamical system.
+
+    @param u - system input, considered constant for the duration of
+    time_step
+    @param time_step - duration [0,time_step] of simulation
     """
-    def __call__(self, sim_step):
-        """
-        Compute the output of a first-order dynamical system.
+    gain, time_constant, u = props.fuse_inputs(*sim_step.inputs)
 
-        @param u - system input, considered constant for the duration of
-                   time_step
-        @param time_step - duration [0,time_step] of simulation
-        """
-        gain, time_constant, u = self.fuse_inputs(*sim_step.inputs)
-
-        def model(x, t):
-            """Solving x' = N*x + K*u for x"""
-            return (-x + gain * u)/time_constant
-        # TODO: divide the timestamps in a smarter way
-        ts = numpy.linspace(0, sim_step.duration, 100)
-        xs = odeint(model, sim_step.x0, ts)
-        return (ts, tuple(el for el in xs[:, 0]))
+    def model(x, t):
+        """Solving x' = N*x + K*u for x"""
+        return (-x + gain * u)/time_constant
+    # TODO: divide the timestamps in a smarter way
+    ts = numpy.linspace(0, sim_step.duration, 100)
+    xs = odeint(model, sim_step.x0, ts)
+    return (ts, tuple(el for el in xs[:, 0]))
 
 
-class LinearCombination(T('LinearCombination', signal_fields('coefficients'))):
-    def __call__(self, sim_step):
+@model_type('coefficients')
+def LinearCombination(props, sim_step):
+    return single_sample(
+        sim_step.duration,
+        sum(c*v for c, v in zip(props.coefficients, sim_step.inputs))
+    )
+
+
+@model_type('step')
+def Counter(props, sim_step):
         return single_sample(
             sim_step.duration,
-            sum(c*v for c, v in zip(self.coefficients, sim_step.inputs))
+            sim_step.x0 + props.step
         )
 
 
-class Counter(T('Counter', signal_fields('step'))):
-    def __call__(self, sim_step):
-        return single_sample(
-            sim_step.duration,
-            sim_step.x0 + self.step
-        )
+@model_type('predicate')
+def Boolean(props, sim_step):
+    return single_sample(
+        sim_step.duration,
+        1 if props.predicate(sim_step.x0, sim_step.inputs) else 0
+    )
 
 
-class ResetWhen(T('ResetWhen', 'var cond')):
-    def __getattr__(self, name):
-        """
-        Forward any unknown attributes to wrapped component
-        """
-        if name not in ('cond',):
-            return getattr(self.var, name)
-
-    def __call__(self, sim_step):
-        reset_on, *var_inputs = sim_step.inputs
-        return (
-            self.var(sim_step._replace(inputs=var_inputs))
-            if not self.cond(reset_on)
-            else single_sample(sim_step.duration, self.var.start)
-        )
-
-
-class PauseWhen(T('PauseWhen', 'var cond')):
-    def __getattr__(self, name):
-        """
-        Forward any unknown attributes to wrapped component
-        """
-        if name not in ('cond',):
-            return getattr(self.var, name)
-
-    def __call__(self, sim_step):
-        pause_on, *var_input = sim_step.inputs
-        return (
-            self.var(sim_step._replace(inputs=var_input))
-            if not self.cond(pause_on)
-            else single_sample(sim_step.duration, sim_step.x0)
-        )
-
-
-class Boolean(T('Boolean', signal_fields('predicate'))):
-    def __call__(self, sim_step):
-        return single_sample(
-            sim_step.duration,
-            1 if self.predicate(sim_step.x0, sim_step.inputs) else 0
-        )
-
-
-class OnOffController(T('OnOffController', signal_fields('hyst on off'))):
-    def __call__(self, sim_step):
-        signal, set_point = sim_step.inputs
-        upper_bound, lower_bound = set_point + self.hyst, set_point - self.hyst
-        # handle out-of-bounds signal first
-        if signal > upper_bound:
-            return single_sample(sim_step.duration, self.off)
-        if signal < lower_bound:
-            return single_sample(sim_step.duration, self.on)
-        # now signal is within bounds for sure
-        if sim_step.x0 == self.on:
-            val = self.on if signal >= lower_bound else self.off
-        else:
-            val = self.off if signal <= upper_bound else self.on
-        return single_sample(sim_step.duration, val)
+@model_type('hyst on off')
+def OnOffController(props, sim_step):
+    signal, set_point = sim_step.inputs
+    upper_bound, lower_bound = set_point + props.hyst, set_point - props.hyst
+    # handle out-of-bounds signal first
+    if signal > upper_bound:
+        return single_sample(sim_step.duration, props.off)
+    if signal < lower_bound:
+        return single_sample(sim_step.duration, props.on)
+    else:
+        return single_sample(sim_step.duration, sim_step.x0)

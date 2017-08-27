@@ -1,6 +1,8 @@
 from libsim.models import (
-    ResetWhen,
     SimulationStep
+)
+from libsim.features import (
+    Reset,
 )
 from libsim.util import (
     latest_sample,
@@ -23,7 +25,7 @@ def test_reset():
     """
     Should be reset to starting value when condition met
     """
-    resettable = ResetWhen(var=model, cond=partial(eq, 0))
+    resettable = model & Reset.by(reset_cond=partial(eq, 0))
 
     assert latest_sample(resettable(sim_step)) == 20
 
@@ -32,7 +34,7 @@ def test_param_forwarding():
     """
     Should behave like a variable
     """
-    assert ResetWhen(var=model, cond=lambda: False).start == 20
+    assert (model & Reset.by(reset_cond=lambda: False)).start == 20
 
 
 def test_should_pass_down_input_tail():
@@ -40,7 +42,7 @@ def test_should_pass_down_input_tail():
         v1, v2 = sim_step.inputs
         assert v1 == 1
         assert v2 == 2
-    var = ResetWhen(cond=never, var=assert_inputs)
+    var = Reset.by(never)(assert_inputs)
     step = SimulationStep(x0=1, inputs=(0, 1, 2), duration=1)
     var(step)
 
@@ -49,6 +51,6 @@ def test_should_call_predicate_with_first_input_only():
     def pred(x):
         assert x == 0
         return False
-    var = ResetWhen(cond=pred, var=model)
+    var = model & Reset.by(pred)
     step = SimulationStep(x0=1, inputs=(0, 1, 2), duration=1)
     var(step)

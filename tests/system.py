@@ -5,8 +5,10 @@ System definitions for test suite
 from libsim.models import (
     Property,
     FirstOrder,
-    Bounded,
     System,
+)
+from libsim.features import (
+    Bounded,
 )
 load = Property(name='load', unit='kg', human_name='Load on shaft', start=0)
 engine_efficiency = Property(
@@ -38,7 +40,7 @@ angular_velocity = FirstOrder(
     start=0,
     fuse_inputs=angular_velocity_fuse_inputs
 )
-bounded_angular_velocity = Bounded(var=angular_velocity, min=0, max=15000)
+bounded_angular_velocity = angular_velocity & Bounded.by(min=0, max=15000)
 
 deps = {
     angular_velocity: (input_current, load),
