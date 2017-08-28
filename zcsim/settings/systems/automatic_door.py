@@ -15,14 +15,27 @@ from functools import (
     partial,
 )
 
-motor_efficiency = models.Property(name='motor_efficiency', unit='%', start=70)
-fuse_replaced = models.Property(name='fuse_replaced', unit='[0/1]', start=0)
+motor_efficiency = models.Property(
+    human_name="Motor efficiency",
+    name='motor_efficiency', unit='%', start=70
+)
+fuse_replaced = models.Property(
+    human_name="Has fuse been replaced?",
+    name='fuse_replaced', unit='[0/1]', start=0
+)
 people_waiting = models.Property(
+    human_name="Are people waiting to go through?",
     name='people_waiting', unit='[0/1]', start=0
 )
 bearing_condition = T('BearingConditon', 'left right')(
-    left=models.Property(name='bearing_condition_left', unit='%', start=100),
-    right=models.Property(name='bearing_condition_right', unit='%', start=100),
+    left=models.Property(
+        human_name="Condition of left door bearing",
+        name='bearing_condition_left', unit='%', start=100
+    ),
+    right=models.Property(
+        human_name="Condition of right door bearing",
+        name='bearing_condition_right', unit='%', start=100
+    ),
 )
 
 
