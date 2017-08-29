@@ -14,7 +14,7 @@ def signal_fields(custom_fields=None):
 
 System = T('System', 'processes properties dependencies')
 SimulationStep = T('SimulationStep', 'x0 inputs duration')
-Property = T('Property', signal_fields('unit'))
+Property = T('Property', signal_fields('unit min max step'))
 
 
 class ModelMixin():

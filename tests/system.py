@@ -10,8 +10,12 @@ from libsim.models import (
 from libsim.features import (
     Bounded,
 )
-load = Property(name='load', unit='kg', human_name='Load on shaft', start=0)
+load = Property(
+    min=0, max=300, step=0.5,
+    name='load', unit='kg', human_name='Load on shaft', start=0
+)
 engine_efficiency = Property(
+    min=70, max=100, step=1,
     name='engine-efficiency', unit='%', human_name='Eff', start=70
 )
 
