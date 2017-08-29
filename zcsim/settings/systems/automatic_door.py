@@ -68,6 +68,7 @@ door_position = T('DoorPosition', 'left right')(
         name='door_position_left', start=0,
         fuse_inputs=door_position_input
     ) & (
+        Bounded.by(0, 10),
         Paused.by(current_in_green_zone)
     ),
     right=models.FirstOrder(
@@ -75,6 +76,7 @@ door_position = T('DoorPosition', 'left right')(
         name='door_position_right', start=0,
         fuse_inputs=door_position_input
     ) & (
+        Bounded.by(0, 10),
         Paused.by(current_in_green_zone)
     ),
 )
@@ -132,12 +134,14 @@ overheat = T('Overheat', 'left right')(
         human_name="Time left until left motor fails",
         name='overheat_countdown_left', start=20, step=-1
     ) & (
+        Bounded.by(0, 20),
         Reset.by(current_in_green_zone)
     ),
     right=models.Counter(
         human_name="Time left until right motor fails",
         name='overheat_countdown_right', start=20, step=-1
     ) & (
+        Bounded.by(0, 20),
         Reset.by(current_in_green_zone)
     ),
 )
@@ -157,6 +161,8 @@ fuse_blown = models.Boolean(
     name='fuse_blown',
     predicate=is_fuse_blown,
     start=0
+) & (
+    Bounded.by(0, 1)
 )
 
 system = models.System(**{
