@@ -3,6 +3,12 @@ from dateutil import parser
 from redis import ConnectionPool, StrictRedis
 
 from ..settings import get_settings
+from libsim.run import (
+    system_from_module,
+)
+from itertools import (
+    chain,
+)
 
 logger = logging.getLogger(__name__)
 settings = get_settings()
@@ -23,6 +29,25 @@ def get_redis():
     return StrictRedis(connection_pool=RedisConnectionPoolSingleton(decode_responses=True),
                        charset="utf-8",
                        decode_responses=True)
+
+
+def to_redis(process_t, prop_t):
+    return (
+        {k.name: v for k, v in process_t.items()},
+        {k.name: v for k, v in prop_t.items()}
+    )
+
+
+def from_redis(syscfg, redis_process_t, redis_prop_t):
+    obj_from = {
+        o.name: o for o in chain(syscfg.processes, syscfg.properties)
+    }
+    # TODO: get rid of magic keys leaking out of redis util
+    return (
+        {obj_from[k]: v for k, v in redis_process_t.items() if (k not in ('ts', 'send_ts'))},
+        {obj_from[k]: v for k, v in redis_prop_t.items() if (k not in ('ts', 'send_ts'))}
+    )
+
 
 # Device state
 def get_device_state_key(device_id):
@@ -68,6 +93,36 @@ def set_device_variables(device_id, variables):
 def get_device_variables_min_max(device_id):
     variables = get_device_variables(device_id)
     return variables
+
+
+def get_device_info_extended(device_id):
+    system = system_from_module(settings["sim_system"])
+    variables = get_device_variables(device_id)
+    state = get_device_state(device_id)
+
+    processes, props = from_redis(system, state, variables)
+    ext_state = {
+        p.name: {
+            'value': v,
+            'human_name': p.human_name,
+            'min': p.min,
+            'max': p.max,
+        }
+        for p, v in processes.items()
+    }
+    ext_variables = {
+        p.name: {
+            'value': v,
+            'human_name': p.human_name,
+            'min': p.min,
+            'max': p.max,
+            'step': p.step,
+        }
+        for p, v in props.items()
+    }
+
+    return (ext_state, ext_variables)
+
 
 def get_device_variables(device_id):
     redis = get_redis()
