@@ -1,21 +1,41 @@
 from collections import namedtuple as T
 from libsim import models
+from libsim.features import (
+    Paused,
+    Reset,
+    Bounded,
+)
 from libsim.util import (
     within_bottom_margin,
     within_top_margin,
     predicate,
     range_transform,
 )
-from functools import partial
+from functools import (
+    partial,
+)
 
-motor_efficiency = models.Property(name='motor_efficiency', unit='%', start=70)
-fuse_replaced = models.Property(name='fuse_replaced', unit='[0/1]', start=0)
+motor_efficiency = models.Property(
+    human_name="Motor efficiency",
+    name='motor_efficiency', unit='%', start=70
+)
+fuse_replaced = models.Property(
+    human_name="Has fuse been replaced?",
+    name='fuse_replaced', unit='[0/1]', start=0
+)
 people_waiting = models.Property(
+    human_name="Are people waiting to go through?",
     name='people_waiting', unit='[0/1]', start=0
 )
 bearing_condition = T('BearingConditon', 'left right')(
-    left=models.Property(name='bearing_condition_left', unit='%', start=100),
-    right=models.Property(name='bearing_condition_right', unit='%', start=100),
+    left=models.Property(
+        human_name="Condition of left door bearing",
+        name='bearing_condition_left', unit='%', start=100
+    ),
+    right=models.Property(
+        human_name="Condition of right door bearing",
+        name='bearing_condition_right', unit='%', start=100
+    ),
 )
 
 
@@ -38,22 +58,20 @@ def door_position_input(people_waiting, bearing_condition):
 
 
 door_position = T('DoorPosition', 'left right')(
-    left=models.PauseWhen(
-        cond=current_in_green_zone,
-        var=models.FirstOrder(
-            human_name="Left door position sensor",
-            name='door_position_left', start=0,
-            fuse_inputs=door_position_input
-        )
+    left=models.FirstOrder(
+        human_name="Left door position sensor",
+        name='door_position_left', start=0,
+        fuse_inputs=door_position_input
+    ) & (
+        Paused.by(current_in_green_zone)
     ),
-    right=models.PauseWhen(
-        cond=current_in_green_zone,
-        var=models.FirstOrder(
-            human_name="Right door position sensor",
-            name='door_position_right', start=0,
-            fuse_inputs=door_position_input
-        )
-    )
+    right=models.FirstOrder(
+        human_name="Right door position sensor",
+        name='door_position_right', start=0,
+        fuse_inputs=door_position_input
+    ) & (
+        Paused.by(current_in_green_zone)
+    ),
 )
 
 
@@ -78,49 +96,45 @@ def current_in_inputs(door_position, people_waiting):
     )
 
 
+def truthy_signal(s):
+    return True if s else False
+
+
 current = T('Current', 'left right')(
-    left=models.ResetWhen(
-        cond=lambda fuse_blown: fuse_blown,
-        var=models.Bounded(
-            min=0, max=5,
-            var=models.FirstOrder(
-                human_name="Current drawn from mains (left door)",
-                name='current_in_left',
-                start=0,
-                fuse_inputs=current_in_inputs
-            )
-        )
+    left=models.FirstOrder(
+        human_name="Current drawn from mains (left door)",
+        name='current_in_left',
+        start=0,
+        fuse_inputs=current_in_inputs
+    ) & (
+        Bounded.by(min=0, max=5),
+        Reset.by(truthy_signal)
     ),
-    right=models.ResetWhen(
-        cond=lambda fuse_blown: fuse_blown,
-        var=models.Bounded(
-            min=0, max=5,
-            var=models.FirstOrder(
-                human_name="Current drawn from mains (right door)",
-                name='current_in_right',
-                start=0,
-                fuse_inputs=current_in_inputs
-            )
-        )
-    )
+    right=models.FirstOrder(
+        human_name="Current drawn from mains (right door)",
+        name='current_in_right',
+        start=0,
+        fuse_inputs=current_in_inputs
+    ) & (
+        Bounded.by(min=0, max=5),
+        Reset.by(truthy_signal)
+    ),
 )
 
 
 overheat = T('Overheat', 'left right')(
-    left=models.ResetWhen(
-        cond=current_in_green_zone,
-        var=models.Counter(
-            human_name="Time left until left motor fails",
-            name='overheat_countdown_left', start=20, step=-1
-        ),
+    left=models.Counter(
+        human_name="Time left until left motor fails",
+        name='overheat_countdown_left', start=20, step=-1
+    ) & (
+        Reset.by(current_in_green_zone)
     ),
-    right=models.ResetWhen(
-        cond=current_in_green_zone,
-        var=models.Counter(
-            human_name="Time left until right motor fails",
-            name='overheat_countdown_right', start=20, step=-1
-        ),
-    )
+    right=models.Counter(
+        human_name="Time left until right motor fails",
+        name='overheat_countdown_right', start=20, step=-1
+    ) & (
+        Reset.by(current_in_green_zone)
+    ),
 )
 
 

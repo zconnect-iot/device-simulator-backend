@@ -23,6 +23,7 @@ def test_upper_bounds_ensured():
     )
     _, samples = bounded_angular_velocity(example_step)
     assert not any(s > bounded_angular_velocity.max for s in samples)
+    assert samples[-1] == bounded_angular_velocity.max
 
 def test_lower_bounds_ensured():
     """
@@ -35,3 +36,4 @@ def test_lower_bounds_ensured():
     )
     _, samples = bounded_angular_velocity(example_step)
     assert not any(s < bounded_angular_velocity.min for s in samples)
+    assert samples[-1] == bounded_angular_velocity.min

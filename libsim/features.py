@@ -46,16 +46,16 @@ def feature_type(custom_fields):
 
 @feature_type('min max')
 def Bounded(props, var, sim_step):
-    def _ensure_in_range(_min, _max, v):
-        if v >= _max:
-            return _max
-        elif v <= _min:
-            return _min
+    def _ensure_in_range(v):
+        if v >= props.max:
+            return props.max
+        elif v <= props.min:
+            return props.min
         else:
             return v
 
     ts, xs = var(sim_step)
-    return (ts, tuple(_ensure_in_range(props.min, props.max, x) for x in xs))
+    return (ts, tuple(_ensure_in_range(x) for x in xs))
 
 
 @feature_type('pause_cond')
