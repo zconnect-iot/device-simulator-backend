@@ -8,6 +8,9 @@ from libsim.features import (
     Reset,
     Bounded,
 )
+from libsim.util import (
+    range_transform,
+)
 from functools import (
     partial,
 )
@@ -80,12 +83,6 @@ def bt_fi(cct, door_opened):
     return (gain, tau, 1)
 
 
-def ci_fi(cold_pipe_leak, hot_pipe_leak):
-    gain = 2 if (cold_pipe_leak or hot_pipe_leak) else 1
-    tau = 1
-    return (gain, tau, 1)
-
-
 hot_coolant_temp = FirstOrder(
     human_name="""Temperature of used cooling fluid""",
     name='hot-coolant-temp',
@@ -110,6 +107,16 @@ box_temp = FirstOrder(
 ) & (
     Bounded.by(cold_coolant_temp.min, ambient_temp.max)
 )
+temp_diff_min = hot_coolant_temp.min - cold_coolant_temp.max
+temp_diff_max = hot_coolant_temp.max - cold_coolant_temp.min
+gain_from_temp_diff = range_transform((temp_diff_min, temp_diff_max), (0, 0.5))
+
+
+def ci_fi(cct, hct):
+    tau = 1
+    return (1 + gain_from_temp_diff(hct - cct), tau, 1)
+
+
 current_in = FirstOrder(
     human_name="""Current drawn from mains""",
     name='current-in', start=0, fuse_inputs=ci_fi
@@ -140,6 +147,6 @@ system = System(
         hot_coolant_temp: (hot_pipe_leak, thermostat, ambient_temp),
         cold_coolant_temp: (cold_pipe_leak, thermostat, ambient_temp,
                             set_point, cold_coolant_temp),
-        current_in: (thermostat, cold_pipe_leak, hot_pipe_leak)
+        current_in: (thermostat, cold_coolant_temp, hot_coolant_temp)
     }
 )
