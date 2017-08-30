@@ -16,7 +16,7 @@ from operator import (
 )
 
 thermostat = OnOffController(
-    human_name='Fridge off?',
+    human_name="""Fridge actively cooling?""",
     name='thermostat',
     start=0,
     hyst=0.5,
@@ -48,7 +48,7 @@ cold_pipe_leak = Property(
     min=0, max=1, step=1,
 )
 door_opened = Property(
-    human_name='Are door opened?',
+    human_name='Is door open?',
     name='door-opened', start=0, unit='0/1',
     min=0, max=1, step=1,
 )
@@ -87,7 +87,7 @@ def ci_fi(cold_pipe_leak, hot_pipe_leak):
 
 
 hot_coolant_temp = FirstOrder(
-    human_name="""Temperature of fresh cooling fluid""",
+    human_name="""Temperature of used cooling fluid""",
     name='hot-coolant-temp',
     start=ambient_temp.start,
     fuse_inputs=hct_fi
@@ -95,7 +95,7 @@ hot_coolant_temp = FirstOrder(
     Bounded.by(ambient_temp.min, ambient_temp.max + 15)
 )
 cold_coolant_temp = FirstOrder(
-    human_name="""Temperature of used cooling fluid""",
+    human_name="""Temperature of fresh cooling fluid""",
     name='cold-coolant-temp',
     start=ambient_temp.start,
     fuse_inputs=cct_fi
