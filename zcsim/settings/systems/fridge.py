@@ -6,6 +6,7 @@ from libsim.models import (
 )
 from libsim.features import (
     Reset,
+    Bounded,
 )
 from functools import (
     partial,
@@ -21,6 +22,8 @@ thermostat = OnOffController(
     hyst=0.5,
     on=0,
     off=1,
+) & (
+    Bounded.by(0, 1)
 )
 thermostat_cooling = 1
 thermostat_disabled = 0
@@ -88,24 +91,31 @@ hot_coolant_temp = FirstOrder(
     name='hot-coolant-temp',
     start=ambient_temp.start,
     fuse_inputs=hct_fi
+) & (
+    Bounded.by(ambient_temp.min, ambient_temp.max + 15)
 )
 cold_coolant_temp = FirstOrder(
     human_name="""Temperature of used cooling fluid""",
     name='cold-coolant-temp',
     start=ambient_temp.start,
     fuse_inputs=cct_fi
+) & (
+    Bounded.by(set_point.min - 1, ambient_temp.max)
 )
 box_temp = FirstOrder(
     human_name="""Temperature inside the fridge""",
     name='box-temp',
     start=ambient_temp.start,
     fuse_inputs=bt_fi
+) & (
+    Bounded.by(cold_coolant_temp.min, ambient_temp.max)
 )
 current_in = FirstOrder(
     human_name="""Current drawn from mains""",
     name='current-in', start=0, fuse_inputs=ci_fi
 ) & (
-    Reset.by(partial(eq, thermostat_disabled))
+    Reset.by(partial(eq, thermostat_disabled)),
+    Bounded.by(0, 2),
 )
 
 
