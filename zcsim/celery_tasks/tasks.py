@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 
 from ..util.redis import (
+    from_redis, to_redis,
     set_device_state,
     get_device_state,
     set_device_variables,
@@ -18,8 +19,6 @@ from ..util.redis import (
 from ..settings import get_settings
 
 from zcsim.util.task_base import WatsonIoTTaskBase
-
-from itertools import chain
 
 from libsim.run import (
     system_from_module,
@@ -35,23 +34,6 @@ def system_tables_defaults(syscfg):
         {k: k.start for k in syscfg.properties}
     )
 
-
-def to_redis(process_t, prop_t):
-    return (
-        {k.name: v for k, v in process_t.items()},
-        {k.name: v for k, v in prop_t.items()}
-    )
-
-
-def from_redis(syscfg, redis_process_t, redis_prop_t):
-    obj_from = {
-        o.name: o for o in chain(syscfg.processes, syscfg.properties)
-    }
-    # TODO: get rid of magic keys leaking out of redis util
-    return (
-        {obj_from[k]: v for k, v in redis_process_t.items() if (k not in ('ts', 'send_ts'))},
-        {obj_from[k]: v for k, v in redis_prop_t.items() if (k not in ('ts', 'send_ts'))}
-    )
 
 def get_device_info(device_id):
     """Gets device state with defaults

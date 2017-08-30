@@ -4,7 +4,8 @@ from flask_jwt_extended import jwt_required
 
 from ..util.redis import (
     get_device_state, set_device_variables, get_device_variables,
-    reset_state_and_variables, get_device_variables_min_max, get_device_state_min_max
+    reset_state_and_variables,
+    get_device_info_extended,
 )
 
 logger = logging.getLogger(__name__)
@@ -15,8 +16,7 @@ devices = Blueprint("devices", __name__)
 def get_device_status(device_id):
     """ Get the variables and state of a device from redis """
 
-    variables = get_device_variables_min_max(device_id)
-    state = get_device_state_min_max(device_id)
+    state, variables = get_device_info_extended(device_id)
 
     response = {
         "variables": variables,
