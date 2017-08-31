@@ -190,7 +190,7 @@ const2 = variable1(name='const2', human_name='My model 2', start=10, const=2)
     only once and thus should have no visible side-effects.
 
     When you apply this feature, remember to
-    prepend[(**)](#composing_features_note) the resetting signal to process
+    prepend[(**)](#composing_features_note) the pausing signal to process
     dependencies.
 
 Example:
