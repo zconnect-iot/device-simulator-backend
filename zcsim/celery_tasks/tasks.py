@@ -106,9 +106,9 @@ def upload_device_state(device_id):
     variables = get_device_variables(device_id)
 
     payload = {
-        "inside_temp": state['temp_in'],
-        "external_temp": variables['temp_out'],
-        "power_use": state['present_current_draw'],
+        'device_id': device_id,
+        'processes': state,
+        'properties': variables,
     }
     device_conn.publishEvent("periodic",
                              "json-iotf",
