@@ -2,14 +2,14 @@ from libsim.models import (
     SimulationStep,
 )
 from libsim.features import (
-    Bounded,
+    BoundedBy,
 )
 
 from tests.system import (
     angular_velocity,
 )
 
-bounded_angular_velocity = angular_velocity & Bounded.by(0,15000)
+bounded_angular_velocity = angular_velocity & BoundedBy(0,15000)
 
 
 def test_upper_bounds_ensured():

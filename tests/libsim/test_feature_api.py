@@ -5,8 +5,9 @@ from libsim.models import (
     SimulationStep,
 )
 from libsim.features import (
-    Bounded,
-    Paused,
+    BoundedBy,
+    PausedBy,
+    feature_type,
 )
 from libsim.util import (
     latest_sample,
@@ -19,17 +20,28 @@ from operator import (
 )
 
 flop = 0
-model = create_flip_flop_model(flip=39, flop=flop, start=0)
+flip = 39
+model = create_flip_flop_model(flip=flip, flop=flop, start=0)
+
+
+def test_paramterless_feature_creation():
+    @feature_type()
+    def Inverted(var, sim_step):
+        ts, xs = var(sim_step)
+        return (ts, tuple(-x for x in xs))
+
+    step = SimulationStep(x0=flip, duration=1, inputs=tuple())
+    assert -flop == latest_sample((model & Inverted())(step))
 
 
 def test_should_apply_a_feature():
-    assert 10 == (model & Bounded.by(min=10, max=20)).min
+    assert 10 == (model & BoundedBy(min=10, max=20)).min
 
 
 def test_should_apply_all_features():
     new_model = model & (
-        Paused.by(partial(eq,5)),
-        Bounded.by(min=10, max=20),
+        PausedBy(partial(eq,5)),
+        BoundedBy(min=10, max=20),
     )
     maxing_step = SimulationStep(x0=flop, inputs=(6,), duration=1)
     pausing_step = maxing_step._replace(inputs=(5,))

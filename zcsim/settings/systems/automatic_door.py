@@ -1,9 +1,9 @@
 from collections import namedtuple as T
 from libsim import models
 from libsim.features import (
-    Paused,
-    Reset,
-    Bounded,
+    PausedBy,
+    ResetBy,
+    BoundedBy,
 )
 from libsim.util import (
     within_bottom_margin,
@@ -68,16 +68,16 @@ door_position = T('DoorPosition', 'left right')(
         name='door_position_left', start=0,
         fuse_inputs=door_position_input
     ) & (
-        Bounded.by(0, 10),
-        Paused.by(current_in_green_zone)
+        BoundedBy(0, 10),
+        PausedBy(current_in_green_zone)
     ),
     right=models.FirstOrder(
         human_name="Right door position sensor",
         name='door_position_right', start=0,
         fuse_inputs=door_position_input
     ) & (
-        Bounded.by(0, 10),
-        Paused.by(current_in_green_zone)
+        BoundedBy(0, 10),
+        PausedBy(current_in_green_zone)
     ),
 )
 
@@ -114,8 +114,8 @@ current = T('Current', 'left right')(
         start=0,
         fuse_inputs=current_in_inputs
     ) & (
-        Bounded.by(min=0, max=5),
-        Reset.by(truthy_signal)
+        BoundedBy(min=0, max=5),
+        ResetBy(truthy_signal)
     ),
     right=models.FirstOrder(
         human_name="Current drawn from mains (right door)",
@@ -123,8 +123,8 @@ current = T('Current', 'left right')(
         start=0,
         fuse_inputs=current_in_inputs
     ) & (
-        Bounded.by(min=0, max=5),
-        Reset.by(truthy_signal)
+        BoundedBy(min=0, max=5),
+        ResetBy(truthy_signal)
     ),
 )
 
@@ -134,15 +134,15 @@ overheat = T('Overheat', 'left right')(
         human_name="Time left until left motor fails",
         name='overheat_countdown_left', start=20, step=-1
     ) & (
-        Bounded.by(0, 20),
-        Reset.by(current_in_green_zone)
+        BoundedBy(0, 20),
+        ResetBy(current_in_green_zone)
     ),
     right=models.Counter(
         human_name="Time left until right motor fails",
         name='overheat_countdown_right', start=20, step=-1
     ) & (
-        Bounded.by(0, 20),
-        Reset.by(current_in_green_zone)
+        BoundedBy(0, 20),
+        ResetBy(current_in_green_zone)
     ),
 )
 
@@ -162,7 +162,7 @@ fuse_blown = models.Boolean(
     predicate=is_fuse_blown,
     start=0
 ) & (
-    Bounded.by(0, 1)
+    BoundedBy(0, 1)
 )
 
 system = models.System(**{

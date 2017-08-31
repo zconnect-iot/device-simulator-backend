@@ -8,7 +8,7 @@ from libsim.models import (
     System,
 )
 from libsim.features import (
-    Bounded,
+    BoundedBy,
 )
 load = Property(
     min=0, max=300, step=0.5,
@@ -44,7 +44,7 @@ angular_velocity = FirstOrder(
     start=0,
     fuse_inputs=angular_velocity_fuse_inputs
 )
-bounded_angular_velocity = angular_velocity & Bounded.by(min=0, max=15000)
+bounded_angular_velocity = angular_velocity & BoundedBy(min=0, max=15000)
 
 deps = {
     angular_velocity: (input_current, load),

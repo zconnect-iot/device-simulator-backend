@@ -15,7 +15,8 @@ class FeatureMixin():
             return getattr(self.var_, name)
 
 
-def feature_type(custom_fields):
+def feature_type(custom_fields=None):
+    custom_fields = custom_fields or ''
     def decorate(f):
         nt_name = f.__name__ + '_props'
         nt_fields = ' '.join(('var_', custom_fields))
@@ -31,21 +32,20 @@ def feature_type(custom_fields):
             except TypeError:
                 return f(self.var_, sim_step)
 
-        def create(cls, *args, **kwargs):
+        ret_type = type(f.__name__ + '_t', bases, {})
+        setattr(ret_type, '__call__', invoke_model)
+
+        def create(*args, **kwargs):
             def get(var):
-                return cls(var, *args, **kwargs)
+                return ret_type(var, *args, **kwargs)
             return get
 
-        ret_type = type(f.__name__, bases, {})
-        setattr(ret_type, '__call__', invoke_model)
-        setattr(ret_type, 'by', classmethod(create))
-
-        return ret_type
+        return create
     return decorate
 
 
 @feature_type('min max')
-def Bounded(props, var, sim_step):
+def BoundedBy(props, var, sim_step):
     def _ensure_in_range(v):
         if v >= props.max:
             return props.max
@@ -59,7 +59,7 @@ def Bounded(props, var, sim_step):
 
 
 @feature_type('pause_cond')
-def Paused(props, var, sim_step):
+def PausedBy(props, var, sim_step):
     pause_on, *var_input = sim_step.inputs
     return (
         var(sim_step._replace(inputs=var_input))
@@ -69,7 +69,7 @@ def Paused(props, var, sim_step):
 
 
 @feature_type('reset_cond')
-def Reset(props, var, sim_step):
+def ResetBy(props, var, sim_step):
     reset_on, *var_inputs = sim_step.inputs
     return (
         var(sim_step._replace(inputs=var_inputs))

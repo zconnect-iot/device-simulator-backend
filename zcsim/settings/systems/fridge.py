@@ -5,8 +5,8 @@ from libsim.models import (
     System,
 )
 from libsim.features import (
-    Reset,
-    Bounded,
+    ResetBy,
+    BoundedBy,
 )
 from libsim.util import (
     range_transform,
@@ -26,7 +26,7 @@ thermostat = OnOffController(
     on=0,
     off=1,
 ) & (
-    Bounded.by(0, 1)
+    BoundedBy(0, 1)
 )
 thermostat_cooling = 1
 thermostat_disabled = 0
@@ -89,7 +89,7 @@ hot_coolant_temp = FirstOrder(
     start=ambient_temp.start,
     fuse_inputs=hct_fi
 ) & (
-    Bounded.by(ambient_temp.min, ambient_temp.max + 15)
+    BoundedBy(ambient_temp.min, ambient_temp.max + 15)
 )
 cold_coolant_temp = FirstOrder(
     human_name="""Temperature of fresh cooling fluid""",
@@ -97,7 +97,7 @@ cold_coolant_temp = FirstOrder(
     start=ambient_temp.start,
     fuse_inputs=cct_fi
 ) & (
-    Bounded.by(set_point.min - 1, ambient_temp.max)
+    BoundedBy(set_point.min - 1, ambient_temp.max)
 )
 box_temp = FirstOrder(
     human_name="""Temperature inside the fridge""",
@@ -105,7 +105,7 @@ box_temp = FirstOrder(
     start=ambient_temp.start,
     fuse_inputs=bt_fi
 ) & (
-    Bounded.by(cold_coolant_temp.min, ambient_temp.max)
+    BoundedBy(cold_coolant_temp.min, ambient_temp.max)
 )
 temp_diff_min = hot_coolant_temp.min - cold_coolant_temp.max
 temp_diff_max = hot_coolant_temp.max - cold_coolant_temp.min
@@ -121,8 +121,8 @@ current_in = FirstOrder(
     human_name="""Current drawn from mains""",
     name='current-in', start=0, fuse_inputs=ci_fi
 ) & (
-    Reset.by(partial(eq, thermostat_disabled)),
-    Bounded.by(0, 2),
+    ResetBy(partial(eq, thermostat_disabled)),
+    BoundedBy(0, 2),
 )
 
 
