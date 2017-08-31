@@ -1,4 +1,3 @@
-
 # Basic Idea
 The plan is that this 'server' exposes some endpoints to influence the simulation of one or more devices, so that failures and notifications can be invoked without real hardware.
 
@@ -150,7 +149,7 @@ when you need to create a model type similar in functionality to those
 described above.
 
 Example:
-```
+```python
 from libsim.model import (model, model_type)
 from libsim.utils import (single_sample)
 
@@ -196,7 +195,7 @@ const2 = variable1(name='const2', human_name='My model 2', start=10, const=2)
 
 Example:
 
-```
+```python
 less_than_5 = operator.lt(5)
 # features are composable
 proc = FirstOrder(...) & BoundedBy(min=0, max=10) & ResetBy(less_than_5)
@@ -208,7 +207,7 @@ Just like with processes, you can create your own features with `@feature_type`
 function decorator.
 
 Example:
-```
+```python
 from libsim.features import feature_type
 from libsim.util import single_sample
 
@@ -248,7 +247,7 @@ modified.
 
 Example:
 
-```
+```python
 def fi(dep1, dep2, dep3):
     ...
 
