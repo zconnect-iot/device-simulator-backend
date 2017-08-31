@@ -51,11 +51,11 @@ reset_timeout: 0
 
 # settings for connecting to watson iot as a device
 watson:
-    org: 124
-    type: fridge
-    id: 593c2511e5734c0001d20db9
+    org: 5jhkx9
+    type: sim-door
+    id: door1
     auth-method: token
-    auth-token: 0RfYbbX9ynuCI0Evt&
+    auth-token: door1token
 
 devices:
     - "device123"
