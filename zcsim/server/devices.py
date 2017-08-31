@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 devices = Blueprint("devices", __name__)
 
 @devices.route("/device/<device_id>/status", methods=["GET"])
+@jwt_required
 def get_device_status(device_id):
     """ Get the variables and state of a device from redis """
 
@@ -26,6 +27,7 @@ def get_device_status(device_id):
 
 
 @devices.route("/device/<device_id>/variables", methods=["POST"])
+@jwt_required
 def update_variables(device_id):
     """ Update the simulation variables in redis"""
 
@@ -38,6 +40,7 @@ def update_variables(device_id):
     return jsonify(variables)
 
 @devices.route("/device/<device_id>/reset", methods=["POST"])
+@jwt_required
 def reset(device_id):
     """ Reset State and Variables to default"""
 
