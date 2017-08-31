@@ -272,8 +272,9 @@ system = System(
 
 Any python module exposing `system` variable adhering to the above spec can be
 treated as a valid system definition. For an example see
-`zcsim/settings/system.py`. You can point the main simulation code to the right
-definition with the `sim_system` key in the appropriate settings YAML file.
+`zcsim/settings/fridge.py`  or `zcsim/settings/automatic_door.py`. You can point 
+the main simulation code to the right definition with the `sim_system` key in 
+the appropriate settings YAML file.
 
 # Running
 
