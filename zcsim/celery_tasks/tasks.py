@@ -87,13 +87,12 @@ def eval_device_time_step(device_id, up_to_time):
         # TODO
         last_send_time = get_last_send_time(device_id)
         real_now = datetime.utcnow()
-        # if not last_send_time or real_now - last_send_time > send_interval:
-        #     logger.info("Sending to IBM")
-        #     upload_device_state(device_id)
-        #     set_last_send_time(device_id, real_now)
-        # else:
-        #     pass
-        logger.info("Not sending to IBM, %s, %s, %s", last_send_time, now, send_interval)
+        if not last_send_time or real_now - last_send_time > send_interval:
+            logger.info("Sending to IBM")
+            upload_device_state(device_id)
+            set_last_send_time(device_id, real_now)
+        else:
+            logger.info("Not sending to IBM, %s, %s, %s", last_send_time, now, send_interval)
 
         now = set_last_time_step(device_id, now + time_step)
 
@@ -107,9 +106,9 @@ def upload_device_state(device_id):
     variables = get_device_variables(device_id)
 
     payload = {
-        "inside_temp": state['temp_in'],
-        "external_temp": variables['temp_out'],
-        "power_use": state['present_current_draw'],
+        'device_id': device_id,
+        'processes': state,
+        'properties': variables,
     }
     device_conn.publishEvent("periodic",
                              "json-iotf",

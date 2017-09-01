@@ -7,25 +7,18 @@ import ibmiotf
 
 logger = logging.getLogger(__name__)
 
-ibm_options = {
-    "org": "s3lgr1",
-    "type": "fridge",
-    "id": "593c2511e5734c0001d20db9",
-    "auth-method": "token",
-    "auth-token": "0RfYbbX9ynuCI0Evt&",
-}
 class IbmSingleton:
     instance = None
     _lock = threading.Lock()
 
-    def __new__(cls, *args, **kwargs):
+    def __new__(cls, gw_settings):
         if not cls.instance:
             logger.info("Got lock")
             try:
                 logger.info("Not yet connected to IBM. Connecting...")
                 logger.info("Thread: %s", threading.current_thread())
                 logger.info("PID: %s", os.getpid())
-                cls.instance = ibm_device.Client(ibm_options)
+                cls.instance = ibm_device.Client(gw_settings)
                 cls.instance.setMessageEncoderModule("novo", NovoDecoder)
                 logger.info("Created client, connecting")
                 cls.instance.connect()
@@ -36,7 +29,7 @@ class IbmSingleton:
         return cls.instance
 
 
-def get_device_conn():
+def get_device_conn(gw_settings):
     logger.debug("Getting IBM connection")
-    return IbmSingleton()
+    return IbmSingleton(gw_settings)
 

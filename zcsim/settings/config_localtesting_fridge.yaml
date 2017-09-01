@@ -49,9 +49,13 @@ send_interval: 10
 # Reset simulation variables every X seconds
 reset_timeout: 0
 
-# settings for connecting to watson iot as a gateway
-watson_iot_gateway:
-    org: 124
+# settings for connecting to watson iot as a device
+watson:
+    org: 5jhkx9
+    type: sim-fridge
+    id: fridge1
+    auth-method: token
+    auth-token: fridge1token
 
 devices:
     - "device123"
