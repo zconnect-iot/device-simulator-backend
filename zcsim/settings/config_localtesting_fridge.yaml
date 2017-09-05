@@ -53,9 +53,9 @@ reset_timeout: 0
 watson:
     org: 5jhkx9
     type: sim-fridge
-    id: fridge1
+    id: 593c2511e5734c0001d20dba
     auth-method: token
-    auth-token: fridge1token
+    auth-token: "thgU!Gg0IHFg9jzj!("
 
 devices:
     - "device123"

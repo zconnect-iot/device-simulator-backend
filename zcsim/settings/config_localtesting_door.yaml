@@ -53,9 +53,9 @@ reset_timeout: 0
 watson:
     org: 5jhkx9
     type: sim-door
-    id: door1
+    id: 593c2511e5734c0001d20db9
     auth-method: token
-    auth-token: door1token
+    auth-token: FJaCQ7Rxc8avNIYQ4B
 
 devices:
     - "device123"
