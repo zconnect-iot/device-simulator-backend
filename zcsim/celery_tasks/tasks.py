@@ -105,11 +105,8 @@ def upload_device_state(device_id):
     state = get_device_state(device_id)
     variables = get_device_variables(device_id)
 
-    payload = {
-        'device_id': device_id,
-        'processes': state,
-        'properties': variables,
-    }
+    payload = {"process_" + k: v for k, v in state.items()}
+    payload.update({"property_" + k: v for k, v in variables.items()})
     device_conn.publishEvent("periodic",
                              "json-iotf",
                              payload)
