@@ -32,27 +32,27 @@ thermostat_cooling = 1
 thermostat_disabled = 0
 set_point = Property(
     human_name='Cooling temperature',
-    name='set-point', start=5, unit='deg. C',
+    name='set_point', start=5, unit='deg. C',
     min=3, max=8, step=0.5
 )
 ambient_temp = Property(
     human_name='Ambient temperature',
-    name='ambient-temp', start=25, unit='deg. C',
+    name='ambient_temp', start=25, unit='deg. C',
     min=20, max=30, step=0.5
 )
 hot_pipe_leak = Property(
     human_name='Is used cooling liquid pipe leaking?',
-    name='hot-pipe-leak', start=0, unit='0/1',
+    name='hot_pipe_leak', start=0, unit='0/1',
     min=0, max=1, step=1,
 )
 cold_pipe_leak = Property(
     human_name='Is fresh cooling liquid pipe leaking?',
-    name='cold-pipe-leak', start=0, unit='0/1',
+    name='cold_pipe_leak', start=0, unit='0/1',
     min=0, max=1, step=1,
 )
 door_opened = Property(
     human_name='Is door open?',
-    name='door-opened', start=0, unit='0/1',
+    name='door_opened', start=0, unit='0/1',
     min=0, max=1, step=1,
 )
 
@@ -85,7 +85,7 @@ def bt_fi(cct, door_opened):
 
 hot_coolant_temp = FirstOrder(
     human_name="""Temperature of used cooling fluid""",
-    name='hot-coolant-temp',
+    name='hot_coolant_temp',
     start=ambient_temp.start,
     fuse_inputs=hct_fi
 ) & (
@@ -93,7 +93,7 @@ hot_coolant_temp = FirstOrder(
 )
 cold_coolant_temp = FirstOrder(
     human_name="""Temperature of fresh cooling fluid""",
-    name='cold-coolant-temp',
+    name='cold_coolant_temp',
     start=ambient_temp.start,
     fuse_inputs=cct_fi
 ) & (
@@ -101,7 +101,7 @@ cold_coolant_temp = FirstOrder(
 )
 box_temp = FirstOrder(
     human_name="""Temperature inside the fridge""",
-    name='box-temp',
+    name='box_temp',
     start=ambient_temp.start,
     fuse_inputs=bt_fi
 ) & (
@@ -119,7 +119,7 @@ def ci_fi(cct, hct):
 
 current_in = FirstOrder(
     human_name="""Current drawn from mains""",
-    name='current-in', start=0, fuse_inputs=ci_fi
+    name='current_in', start=0, fuse_inputs=ci_fi
 ) & (
     ResetBy(partial(eq, thermostat_disabled)),
     BoundedBy(0, 2),
