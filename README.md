@@ -11,7 +11,7 @@ As a PoC (in both interpretations of the analogy), this is just for a fridge sim
   time-continuous first and second order linear models may be simulated,
   provided time constants are measured in at least seconds.
 
-* Simulation step is expressed in whole seconds, thus the overall accuracy
+* Simulation step is expressed in whole seconds currently, thus the overall accuracy
   might be too low for your use-case.
 
 * No paralell computation of signals.
