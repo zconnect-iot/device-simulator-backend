@@ -5,6 +5,19 @@ The architecture is that we have a redis store which holds the state and simulat
 
 As a PoC (in both interpretations of the analogy), this is just for a fridge simulation.
 
+# Features and limitations
+
+* This package is suitable primarily for simulation of discrete systems! Simple
+  time-continuous first and second order linear models may be simulated,
+  provided time constants are measured in at least seconds.
+
+* Simulation step is expressed in whole seconds currently, thus the overall accuracy
+  might be too low for your use-case.
+
+* No paralell computation of signals.
+
+* O(n) time complexity w.r.t. the numer of simulated signals.
+
 # Simulation
 
 The core simulation logic is implemented in `libsim` package. It defines
