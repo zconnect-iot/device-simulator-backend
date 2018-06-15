@@ -58,6 +58,6 @@ watson:
     auth-token: FJaCQ7Rxc8avNIYQ4B
 
 devices:
-    - "device123"
+    - "123"
 
 sim_system: 'zcsim.settings.systems.automatic_door'

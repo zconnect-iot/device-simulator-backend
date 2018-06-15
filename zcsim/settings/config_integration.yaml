@@ -53,7 +53,7 @@ watson_iot_gateway:
     org: 124
 
 devices:
-    - "device123"
+    - "123"
 
 min_max_thresholds:
     variables:

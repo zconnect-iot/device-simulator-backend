@@ -58,6 +58,6 @@ watson:
     auth-token: "thgU!Gg0IHFg9jzj!("
 
 devices:
-    - "device123"
+    - "123"
 
 sim_system: 'zcsim.settings.systems.fridge'
