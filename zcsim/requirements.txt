@@ -24,4 +24,4 @@ wheel==0.24.0
 uwsgi
 python-dateutil
 #ibmiotf
--e git://github.com/ZoetropeLabs/iot-python.git@master#egg=ibmiotf
+-e git://github.com/ZoetropeLabs/iot-python.git@bitdivision-patch-1#egg=ibmiotf

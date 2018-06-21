@@ -51,11 +51,17 @@ reset_timeout: 0
 
 # settings for connecting to watson iot as a device
 watson:
-    org: 5jhkx9
-    type: sim-fridge
-    id: 593c2511e5734c0001d20dba
-    auth-method: token
-    auth-token: "thgU!Gg0IHFg9jzj!("
+    org: "5jhkx9"
+    type: "sim-fridge"
+    id: "593c2511e5734c0001d20dba"
+
+    broker-url: "vernemq"
+    full_client_id: "g:5jhkx9:sim-fridge:593c2511e5734c0001d20dba"
+    disable-tls: True
+    port: 1883
+    auth-method: "abc"
+    auth-key: "overlock-worker"
+    auth-token: "123456789"
 
 devices:
     - "123"

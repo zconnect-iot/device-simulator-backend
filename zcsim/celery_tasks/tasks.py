@@ -107,7 +107,10 @@ def upload_device_state(device_id):
 
     payload = {"process_" + k: v for k, v in state.items()}
     payload.update({"property_" + k: v for k, v in variables.items()})
-    device_conn.publishEvent("periodic",
+    watson_settings = get_settings()["watson"]
+    device_conn.publishEvent(watson_settings["type"],
+                             watson_settings["id"],
+                             "periodic",
                              "json-iotf",
                              payload)
 
