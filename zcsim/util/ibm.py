@@ -2,7 +2,6 @@ import threading
 import logging
 import os
 from ibmiotf import application as ibm_application
-from zcsim.util.ibm_decoders import NovoDecoder
 import ibmiotf
 
 logger = logging.getLogger(__name__)
@@ -20,12 +19,13 @@ class IbmSingleton:
                 logger.info("PID: %s", os.getpid())
                 logger.info("gw_settings: %s", gw_settings)
                 cls.instance = ibm_application.Client(gw_settings)
-                cls.instance.setMessageEncoderModule("novo", NovoDecoder)
                 logger.info("Created client, connecting")
                 cls.instance.connect()
                 logger.info("----------------------------------CONNECTED TO IBM-----------------------------")
             except ibmiotf.ConnectionException as e:
                 logger.exception("=======================Failed to connect to IBM============================")
+                cls.instance = None
+                return None
             logger.info("Released lock")
         return cls.instance
 

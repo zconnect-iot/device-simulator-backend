@@ -101,6 +101,9 @@ def eval_device_time_step(device_id, up_to_time):
 def upload_device_state(device_id):
     """ Upload the device state and variables to Watson IoT"""
     device_conn = time_step.watson
+    if device_conn is None:
+        logger.info("No vernemq connection")
+        return
     # Get the state and variables so we can build our payload.
     state = get_device_state(device_id)
     variables = get_device_variables(device_id)

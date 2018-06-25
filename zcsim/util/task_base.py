@@ -9,7 +9,7 @@ class WatsonIoTTaskBase(Task):
 
     @property
     def watson(self):
-        if not self._watson:
+        if self._watson is None:
             # make a watson connection
             self._watson = get_device_conn(get_settings()["watson"])
         return self._watson
